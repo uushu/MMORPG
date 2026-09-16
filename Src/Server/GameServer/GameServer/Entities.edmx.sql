@@ -2,13 +2,13 @@
 -- --------------------------------------------------
 -- Entity Designer DDL Script for SQL Server 2005, 2008, 2012 and Azure
 -- --------------------------------------------------
--- Date Created: 07/10/2025 15:01:59
--- Generated from EDMX file: E:\Unity_class\mymmorpg\Src\Server\GameServer\GameServer\Entities.edmx
+-- Date Created: 09/16/2026 15:47:47
+-- Generated from EDMX file: D:\MMORPG_Course\mymmorpg\Src\Server\GameServer\GameServer\Entities.edmx
 -- --------------------------------------------------
 
 SET QUOTED_IDENTIFIER OFF;
 GO
-USE [ExtremeWorld];
+USE [ExtremWorld];
 GO
 IF SCHEMA_ID(N'dbo') IS NULL EXECUTE(N'CREATE SCHEMA [dbo]');
 GO
