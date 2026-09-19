@@ -56,3 +56,5 @@ ipch/
 *.vsp
 *.vspx
 
+Src/Client/Assets/Levels/Arena/LightingData.asset
+Src/Client/Assets/Levels/Arena/LightingData.asset.meta
