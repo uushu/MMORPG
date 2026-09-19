@@ -7,7 +7,7 @@ using Common;
 using Network;
 using SkillBridge.Message;
 using GameServer.Entities;
-using GameServer.Managers;
+//using GameServer.Managers;
 
 namespace GameServer.Services
 {
@@ -157,20 +157,20 @@ namespace GameServer.Services
         {
             TCharacter dbchar = sender.Session.User.Player.Characters.ElementAt(request.characterIdx);
             Log.InfoFormat("UserGameEnterRequest: characterID:{0}:{1} Map:{2}", dbchar.ID, dbchar.Name, dbchar.MapID);
-            Character character = CharacterManager.Instance.AddCharacter(dbchar);
-            SessionManager.Instance.AddSession(character.Id, sender);
+            //Character character = CharacterManager.Instance.AddCharacter(dbchar);
+            //SessionManager.Instance.AddSession(character.Id, sender);
             sender.Session.Response.gameEnter = new UserGameEnterResponse();
             sender.Session.Response.gameEnter.Result = Result.Success;
             sender.Session.Response.gameEnter.Errormsg = "None";
 
             //进入成功，发送初始角色信息
-            sender.Session.Character = character;
-            sender.Session.PostResponser = character;
+            //sender.Session.Character = character;
+            //sender.Session.PostResponser = character;
 
-            sender.Session.Response.gameEnter.Character = character.Info;
-            sender.SendResponse();
+            //sender.Session.Response.gameEnter.Character = character.Info;
+            //sender.SendResponse();
 
-            MapManager.Instance[dbchar.MapID].CharacterEnter(sender, character);
+            //MapManager.Instance[dbchar.MapID].CharacterEnter(sender, character);
         }
 
         void OnGameLeave(NetConnection<NetSession> sender, UserGameLeaveRequest request)
@@ -188,10 +188,10 @@ namespace GameServer.Services
         public void CharacterLeave(Character character)
         {
             Log.InfoFormat("CharacterLeave： characterID:{0}:{1}", character.Id, character.Info.Name);
-            SessionManager.Instance.RemoveSession(character.Id);
-            CharacterManager.Instance.RemoveCharacter(character.Id);
-            character.Clear();
-            MapManager.Instance[character.Info.mapId].CharacterLeave(character);
+        //    SessionManager.Instance.RemoveSession(character.Id);
+        //    CharacterManager.Instance.RemoveCharacter(character.Id);
+        //    character.Clear();
+        //    MapManager.Instance[character.Info.mapId].CharacterLeave(character);
         }
     }
 }

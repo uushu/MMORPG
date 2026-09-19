@@ -231,6 +231,8 @@ message NetMessageRequest{
 	GuildAdminRequest guildAdmin = 29;
 
 	ChatRequest chat = 30;
+
+	FirstTestRquest firtstRequest =31;
 }
 
 message NetMessageResponse{
@@ -277,6 +279,10 @@ message NetMessageResponse{
 
 
 // User Protocol
+message FirstTestRquest {
+	string name = 1;
+}
+
 message UserLoginRequest {
 	string user = 1;
 	string passward = 2;

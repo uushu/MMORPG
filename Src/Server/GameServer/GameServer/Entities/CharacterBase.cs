@@ -1,6 +1,6 @@
 ﻿using Common.Data;
 using GameServer.Core;
-using GameServer.Managers;
+//using GameServer.Managers;
 using SkillBridge.Message;
 using System;
 using System.Collections.Generic;
@@ -33,7 +33,7 @@ namespace GameServer.Entities
             this.Info.ConfigId = configId;
             this.Info.Entity = this.EntityData;
             this.Info.EntityId = this.entityId;
-            this.Define = DataManager.Instance.Characters[this.Info.ConfigId];
+            //this.Define = DataManager.Instance.Characters[this.Info.ConfigId];
             this.Info.Name = this.Define.Name;
         }
     }

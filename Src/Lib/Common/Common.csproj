@@ -29,6 +29,9 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject />
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="log4net, Version=2.0.8.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -53,19 +56,11 @@
   <ItemGroup>
     <Compile Include="BufferUtility.cs" />
     <Compile Include="Data\CharacterDefine.cs" />
-    <Compile Include="Data\EquipDefine.cs" />
-    <Compile Include="Data\RideDefine.cs" />
-    <Compile Include="Data\QuestDefine.cs" />
-    <Compile Include="Data\ItemDefine.cs" />
-    <Compile Include="Data\ShopItemDefine.cs" />
-    <Compile Include="Data\ShopDefine.cs" />
-    <Compile Include="Data\NpcDefine.cs" />
     <Compile Include="Data\SpawnRuleDefine.cs" />
     <Compile Include="Data\SpawnPointDefine.cs" />
     <Compile Include="Data\SpawnType.cs" />
     <Compile Include="Data\TeleporterDefine.cs" />
     <Compile Include="Data\MapDefine.cs" />
-    <Compile Include="GameDefine.cs" />
     <Compile Include="MessageExtend.cs" />
     <Compile Include="Log.cs" />
     <Compile Include="Network\MessageDispatch.cs" />
