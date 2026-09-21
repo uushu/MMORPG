@@ -13,6 +13,14 @@
 /*.pidb
 /*.booproj
 
+# JetBrains / Rider / IntelliJ
+.idea/
+
+# Unity generated IDE project files
+*.csproj
+*.unityproj
+*.sln
+
 
 # User-specific files
 
