@@ -24,7 +24,7 @@ namespace GameServer
         {
             int Port = Properties.Settings.Default.ServerPort;
             network = new NetService();
-            network.Init(8000);
+            network.Init(Port);
             //network.Init(Port);
             DBService.Instance.Init();
             //DataManager.Instance.Load();
