@@ -37,7 +37,10 @@ public class LoadingManager : MonoBehaviour {
 		for (float i = 50; i < 100;)
 		{
 			i += Random.Range(0.1f, 1.5f);
+			i = Mathf.Min(i, 100f);
 			progressBar.value = i;
+			
+			progressNumber.text = Mathf.RoundToInt(i) + "%";
 			yield return new WaitForEndOfFrame();
 			
 		}

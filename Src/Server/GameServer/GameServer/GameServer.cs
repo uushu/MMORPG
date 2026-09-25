@@ -25,7 +25,7 @@ namespace GameServer
             int Port = Properties.Settings.Default.ServerPort;
             network = new NetService();
             network.Init(Port);
-            //network.Init(Port);
+
             DBService.Instance.Init();
             //DataManager.Instance.Load();
             MapService.Instance.Init();
@@ -36,7 +36,7 @@ namespace GameServer
             //TeamService.Instance.Init();
             //GuildService.Instance.Init();
             //ChatService.Instance.Init();
-            HelloHJXService.Instance.Init();
+            
             thread = new Thread(new ThreadStart(this.Update));
 
             return true;

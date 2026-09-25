@@ -11,13 +11,25 @@ public class UIRegister : MonoBehaviour {
 	public InputField userName;
 	public InputField password;
 	public InputField passwordConfirm;
-
-	public Button enterGame;
-
+	public Button registerBtn;
+	
+	public GameObject loginPanel;
 	void Start()
 	{
 		UserService.Instance.OnRegister = OnRegister;
 	}
+	
+	void OnEnable()
+	{
+		if(userName!=null)
+			userName.text = string.Empty;
+		if(password!=null)
+			password.text = string.Empty;
+		if(passwordConfirm!=null)
+			passwordConfirm.text = string.Empty;
+	}
+	
+	// 输入校验
 	public void OnClickRegister()
 	{
 		if (string.IsNullOrEmpty(this.userName.text))
@@ -52,7 +64,7 @@ public class UIRegister : MonoBehaviour {
 	{
 		if (result == Result.Success)
 		{
-			MessageBox.Show("注册成功，正在进入游戏...","提示",MessageBoxType.Information);
+            MessageBox.Show("注册成功,请登录", "提示", MessageBoxType.Information).OnYes = this.CloseRegister;
 			
 		}
 		else
@@ -64,6 +76,6 @@ public class UIRegister : MonoBehaviour {
 	void CloseRegister()
 	{
 		this.gameObject.SetActive(false);
-		// 进入角色创建界面
+		loginPanel.SetActive(true);
 	}
 }

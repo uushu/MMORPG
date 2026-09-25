@@ -20,6 +20,14 @@ public class UILogin : MonoBehaviour
 		UserService.Instance.OnLogin = OnLogin;
 	}
 
+	void OnEnable()
+	{
+		if(userName!=null)
+			userName.text = string.Empty;
+		if(password!=null)
+			password.text = string.Empty;
+	}
+
 	public void OnClickLogin()
 	{
 		if (string.IsNullOrEmpty(this.userName.text))
@@ -44,7 +52,7 @@ public class UILogin : MonoBehaviour
 	{
 		if (result == Result.Success)
 		{
-			SceneManager.Instance.LoadScene("CharSelect");
+			SceneManager.Instance.LoadScene("CharacterSelect");
 			//SoundManager.Instance.PlayMusic(SoundDefine.Music_Select);
 		}
 		else 

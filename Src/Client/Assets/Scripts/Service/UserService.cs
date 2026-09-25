@@ -11,6 +11,8 @@ namespace Service
     {
         public UnityEngine.Events.UnityAction<Result, string> OnLogin;
         public UnityEngine.Events.UnityAction<Result, string> OnRegister;
+         public UnityEngine.Events.UnityAction<Result, string> OnCharacterCreate;
+        
 
         private NetMessage pendingMessage = null;
         private bool connected = false;
@@ -23,6 +25,7 @@ namespace Service
             
             MessageDistributer.Instance.Subscribe<UserLoginResponse>(this.OnUserLogin);
             MessageDistributer.Instance.Subscribe<UserRegisterResponse>(this.OnUserRegister);
+            MessageDistributer.Instance.Subscribe<UserCreateCharacterResponse>(this.OnUserCreateCharacter);
             
         }
         
@@ -30,6 +33,7 @@ namespace Service
         {
             MessageDistributer.Instance.Unsubscribe<UserLoginResponse>(this.OnUserLogin);
             MessageDistributer.Instance.Unsubscribe<UserRegisterResponse>(this.OnUserRegister);
+            MessageDistributer.Instance.Unsubscribe<UserCreateCharacterResponse>(this.OnUserCreateCharacter);
 
             NetClient.Instance.OnConnect -= OnGameServerConnect;
             NetClient.Instance.OnDisconnect -= OnGameServerDisconnect;
@@ -104,7 +108,39 @@ namespace Service
             }
             return false;
         }
+        
+        public void SendRegister(string username, string password)
+        {
+            Debug.LogFormat("UserRegisterRequest::user:{0} psw:{1}",username,password);
+            NetMessage message = new NetMessage();
+            message.Request = new NetMessageRequest();
+            message.Request.userRegister = new UserRegisterRequest();
+            message.Request.userRegister .User = username;
+            message.Request.userRegister .Passward = password;
+            
 
+            if (this.connected && NetClient.Instance.Connected)
+            {
+                this.pendingMessage = null;
+                NetClient.Instance.SendMessage(message);
+                
+            }
+            else
+            {
+                this.pendingMessage = message;
+                this.ConnectToServer();
+            }
+        }
+        void OnUserRegister(object sender, UserRegisterResponse response)
+        {
+            Debug.LogFormat("OnUserRegister:{0} [{1}]" ,response.Result,response.Errormsg);
+
+            if (this.OnRegister != null)
+            {
+                this.OnRegister(response.Result,response.Errormsg);
+            }
+        }
+        
         public void SendLogin(string username, string password)
         {
             Debug.LogFormat("UserLoginRequest::user:{0} psw:{1}",username,password);
@@ -143,21 +179,19 @@ namespace Service
             }
         }
 
-        public void SendRegister(string username, string password)
+        public void SendCharacterCreate(string name, CharacterClass cls)
         {
-            Debug.LogFormat("UserRegisterRequest::user:{0} psw:{1}",username,password);
+            Debug.LogFormat("UserCreateCharacterRequest::name :{0} class:{1}", name, cls);
             NetMessage message = new NetMessage();
             message.Request = new NetMessageRequest();
-            message.Request.userRegister = new UserRegisterRequest();
-            message.Request.userRegister .User = username;
-            message.Request.userRegister .Passward = password;
-            
+            message.Request.createChar = new UserCreateCharacterRequest();
+            message.Request.createChar.Name = name;
+            message.Request.createChar.Class = cls;
 
             if (this.connected && NetClient.Instance.Connected)
             {
                 this.pendingMessage = null;
                 NetClient.Instance.SendMessage(message);
-                
             }
             else
             {
@@ -165,13 +199,42 @@ namespace Service
                 this.ConnectToServer();
             }
         }
-        void OnUserRegister(object sender, UserRegisterResponse response)
+        
+        void OnUserCreateCharacter(object sender, UserCreateCharacterResponse response)
         {
-            Debug.LogFormat("OnUserRegister:{0} [{1}]" ,response.Result,response.Errormsg);
+            Debug.LogFormat("OnUserCreateCharacter:{0} [{1}]", response.Result, response.Errormsg);
 
-            if (this.OnRegister != null)
+            if(response.Result == Result.Success)
             {
-                this.OnRegister(response.Result,response.Errormsg);
+                Models.User.Instance.Info.Player.Characters.Clear();
+                Models.User.Instance.Info.Player.Characters.AddRange(response.Characters);
+            }
+
+            if (this.OnCharacterCreate != null)
+            {
+                this.OnCharacterCreate(response.Result, response.Errormsg);
+
+            }
+        }
+        
+        
+        public void SendGameEnter(int characterIdx)
+        {
+            Debug.LogFormat("UserGameEnterRequest::characterId :{0}", characterIdx);
+            NetMessage message = new NetMessage();
+            message.Request = new NetMessageRequest();
+            message.Request.gameEnter = new UserGameEnterRequest();
+            message.Request.gameEnter.characterIdx = characterIdx;
+            NetClient.Instance.SendMessage(message);
+        }
+
+        void OnGameEnter(object sender, UserGameEnterResponse response)
+        {
+            Debug.LogFormat("OnGameEnter:{0} [{1}]", response.Result, response.Errormsg);
+
+            if (response.Result == Result.Success)
+            {
+
             }
         }
         
