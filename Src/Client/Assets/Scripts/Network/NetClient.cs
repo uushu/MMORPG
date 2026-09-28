@@ -193,6 +193,11 @@ namespace Network
 
             switch (errCode)
             {
+                case NET_ERROR_ON_DESTROY:
+                {
+                    this.running = false;
+                    break;
+                }
                 case NET_ERROR_UNKNOW_PROTOCOL:
                     {
                         //致命错误，停止网络服务

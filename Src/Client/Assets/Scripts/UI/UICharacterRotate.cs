@@ -12,17 +12,20 @@ public class UICharacterRotate : MonoBehaviour , IDragHandler
 
 	public void OnDrag(PointerEventData eventData)
 	{
-		if (root == null)
-		{
-			return;
-		}
 
-		float angle =
+		float horizontalAngle =
 			-eventData.delta.x * rotateSpeed;
+		float verticalAngle =
+			eventData.delta.y * rotateSpeed;
 
 		root.Rotate(
 			Vector3.up,
-			angle,
+			horizontalAngle,
+			Space.World
+		);
+		root.Rotate(
+			Vector3.right,
+			verticalAngle,
 			Space.World
 		);
 	}

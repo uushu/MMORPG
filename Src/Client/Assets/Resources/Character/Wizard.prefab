@@ -578,8 +578,8 @@ GameObject:
   - component: {fileID: 4991727956260050}
   - component: {fileID: 54499142378551830}
   - component: {fileID: 136158063157274762}
-  - component: {fileID: 114959877521383870}
-  - component: {fileID: 114503384418050942}
+  - component: {fileID: 114083351950950774}
+  - component: {fileID: 114486587701119954}
   m_Layer: 0
   m_Name: Wizard
   m_TagString: Untagged
@@ -2410,7 +2410,7 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1442858012577984}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
@@ -2464,7 +2464,7 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorControllerStateOnDisable: 0
---- !u!114 &114503384418050942
+--- !u!114 &114083351950950774
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_CorrespondingSourceObject: {fileID: 0}
@@ -2481,7 +2481,7 @@ MonoBehaviour:
   speed: 0
   entityController: {fileID: 0}
   onAir: 0
---- !u!114 &114959877521383870
+--- !u!114 &114486587701119954
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_CorrespondingSourceObject: {fileID: 0}
@@ -2501,8 +2501,6 @@ MonoBehaviour:
   animSpeed: 1.5
   jumpPower: 3
   isPlayer: 0
-  rideController: {fileID: 0}
-  rideBone: {fileID: 4095463409478612}
 --- !u!136 &136158063157274762
 CapsuleCollider:
   m_ObjectHideFlags: 1

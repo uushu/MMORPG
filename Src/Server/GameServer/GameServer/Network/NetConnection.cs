@@ -117,7 +117,7 @@ namespace Network
         /// <param name="data">The data to send.</param>
         /// <param name="offset">The offset into the data.</param>
         /// <param name="count">The ammount of data to send.</param>
-        private void SendData(Byte[] data, Int32 offset, Int32 count)
+        public void SendData(Byte[] data, Int32 offset, Int32 count)
         {
             lock (this)
             {
@@ -127,12 +127,6 @@ namespace Network
                     //socket.Send(data, offset, count, SocketFlags.None);
                     socket.BeginSend(data, 0, count, SocketFlags.None, new AsyncCallback(SendCallback), socket);
             }
-        }
-
-        public void SendResponse()
-        {
-            byte[] data = session.GetResponse();
-            this.SendData(data, 0, data.Length);
         }
 
         private void SendCallback(IAsyncResult ar)

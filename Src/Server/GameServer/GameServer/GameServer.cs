@@ -12,6 +12,7 @@ using System.Threading;
 
 using Network;
 using GameServer.Services;
+using GameServer.Managers;
 //using GameServer.Managers;
 namespace GameServer
 {
@@ -27,7 +28,7 @@ namespace GameServer
             network.Init(Port);
 
             DBService.Instance.Init();
-            //DataManager.Instance.Load();
+            DataManager.Instance.Load();
             MapService.Instance.Init();
             UserService.Instance.Init();
             //ItemService.Instance.Init();
@@ -47,7 +48,6 @@ namespace GameServer
             network.Start();
             running = true;
             thread.Start();
-            HelloHJXService.Instance.Start();
         }
 
 
@@ -60,13 +60,11 @@ namespace GameServer
 
         public void Update()
         {
-            //var mapManager = MapManager.Instance;
             while (running)
             {
                 Time.Tick();
                 Thread.Sleep(100);
                 //Console.WriteLine("{0} {1} {2} {3} {4}", Time.deltaTime, Time.frameCount, Time.ticks, Time.time, Time.realtimeSinceStartup);
-                //mapManager.Update();
             }
         }
     }

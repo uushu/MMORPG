@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using Service;
 using UnityEngine;
 using UnityEngine.UI;
 using Random = UnityEngine.Random;
@@ -33,6 +34,9 @@ public class LoadingManager : MonoBehaviour {
 		UITips.SetActive(false);
 
 		yield return DataManager.Instance.LoadData();
+		
+		MapService.Instance.Init();
+		UserService.Instance.Init();
 
 		for (float i = 50; i < 100;)
 		{

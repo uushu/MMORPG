@@ -27,7 +27,7 @@ namespace UI
         {
             for (int i = 0; i < 3; i++)
             {
-                characters[i].SetActive(i == currentCharacter);
+                characters[i].SetActive(i == this.currentCharacter);
             }
         }
         

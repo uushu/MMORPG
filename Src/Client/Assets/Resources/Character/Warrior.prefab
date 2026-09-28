@@ -684,8 +684,8 @@ GameObject:
   - component: {fileID: 4174984745379422}
   - component: {fileID: 54255169930946384}
   - component: {fileID: 136599443910912012}
-  - component: {fileID: 114379617363847916}
-  - component: {fileID: 114993706621082294}
+  - component: {fileID: 114313169162393388}
+  - component: {fileID: 114696371298225294}
   m_Layer: 0
   m_Name: Warrior
   m_TagString: Untagged
@@ -842,7 +842,7 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1953393978184550}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
@@ -1416,7 +1416,24 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorControllerStateOnDisable: 0
---- !u!114 &114379617363847916
+--- !u!114 &114313169162393388
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1953393978184550}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 97c99e2cbb8f032409e0e1d25c142557, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  rb: {fileID: 54255169930946384}
+  rotateSpeed: 2
+  turnAngle: 10
+  speed: 0
+  entityController: {fileID: 0}
+  onAir: 0
+--- !u!114 &114696371298225294
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1436,25 +1453,6 @@ MonoBehaviour:
   animSpeed: 1.5
   jumpPower: 3
   isPlayer: 0
-  rideController: {fileID: 0}
-  rideBone: {fileID: 4022653290096014}
---- !u!114 &114993706621082294
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1953393978184550}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 97c99e2cbb8f032409e0e1d25c142557, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  rb: {fileID: 54255169930946384}
-  rotateSpeed: 2
-  turnAngle: 10
-  speed: 0
-  entityController: {fileID: 0}
-  onAir: 0
 --- !u!136 &136599443910912012
 CapsuleCollider:
   m_ObjectHideFlags: 1

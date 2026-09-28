@@ -17,6 +17,7 @@ json-excel\json-excel json Tables\ Data\
 @copy Data\EquipDefine.txt ..\Server\GameServer\GameServer\bin\Debug\Data\
 @copy Data\ItemDefine.txt ..\Server\GameServer\GameServer\bin\Debug\Data\
 @copy Data\LevelUpDefine.txt ..\Server\GameServer\GameServer\bin\Debug\Data\
+@copy Data\MapDefine.txt ..\Server\GameServer\GameServer\bin\Debug\Data\
 @copy Data\NpcDefine.txt ..\Server\GameServer\GameServer\bin\Debug\Data\
 @copy Data\ShopDefine.txt ..\Server\GameServer\GameServer\bin\Debug\Data\
 @copy Data\ShopItemDefine.txt ..\Server\GameServer\GameServer\bin\Debug\Data\
