@@ -15,19 +15,13 @@ public class UICharacterRotate : MonoBehaviour , IDragHandler
 
 		float horizontalAngle =
 			-eventData.delta.x * rotateSpeed;
-		float verticalAngle =
-			eventData.delta.y * rotateSpeed;
 
 		root.Rotate(
 			Vector3.up,
 			horizontalAngle,
 			Space.World
 		);
-		root.Rotate(
-			Vector3.right,
-			verticalAngle,
-			Space.World
-		);
+		
 	}
 
 }

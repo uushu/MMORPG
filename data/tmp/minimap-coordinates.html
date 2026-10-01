@@ -1,0 +1,262 @@
+<div id="minimap-coordinate-explainer">
+  <div class="mm-heading">
+    <h3>小地图坐标与移动方式</h3>
+    <label class="mm-mode-field">
+      <span class="sr-only">移动模式</span>
+      <select id="mm-mode" class="form-select" aria-label="移动模式">
+        <option value="marker">① 固定地图，移动箭头</option>
+        <option value="pivot">② 固定箭头，修改 Pivot</option>
+        <option value="pan" selected>③ 固定箭头，平移地图</option>
+        <option value="camera">④ 正交相机跟随示意</option>
+      </select>
+    </label>
+  </div>
+  <div class="map-pair">
+    <section class="mm-world-panel" aria-label="世界位置">
+      <div class="viz-row text-small"><span>世界 X/Z · 80 × 80</span><output id="mm-world-value" class="tabular-nums"></output></div>
+      <svg id="mm-world" class="map-diagram" role="img" aria-label="世界地面上的角色位置和相机可见范围"></svg>
+    </section>
+    <section aria-label="小地图显示">
+      <div class="viz-row text-small"><span id="mm-mini-label">小地图</span><output id="mm-viewport-value" class="tabular-nums"></output></div>
+      <svg id="mm-mini" class="map-diagram" role="img" aria-label="当前移动模式下的地图、Pivot 和角色箭头"></svg>
+    </section>
+  </div>
+  <div class="mm-inputs">
+    <label class="form-label" for="mm-x">角色 X：<output id="mm-x-value" class="tabular-nums"></output>
+      <input class="form-range" id="mm-x" type="range" min="0" max="80" step="1" value="60">
+    </label>
+    <label class="form-label" for="mm-z">角色 Z：<output id="mm-z-value" class="tabular-nums"></output>
+      <input class="form-range" id="mm-z" type="range" min="0" max="80" step="1" value="20">
+    </label>
+    <label class="form-label mm-yaw-field" for="mm-yaw">视角：<output id="mm-yaw-value" class="tabular-nums"></output>
+      <input class="form-range" id="mm-yaw" type="range" min="-180" max="180" step="1" value="45">
+    </label>
+  </div>
+  <div id="mm-detail" class="text-small tabular-nums" aria-live="polite"></div>
+  <div class="mm-legend viz-row text-small"><span id="mm-pivot-legend">○ 图片 Pivot</span><span>▲ 角色／视角</span><span>■ 示例地标</span></div>
+</div>
+<style>
+  #minimap-coordinate-explainer .mm-heading { display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:8px; margin-bottom:8px; }
+  #minimap-coordinate-explainer h3 { margin:0; }
+  #minimap-coordinate-explainer .mm-mode-field { flex:0 1 290px; min-width:0; }
+  #minimap-coordinate-explainer .map-pair { display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:18px; margin:8px 0; }
+  #minimap-coordinate-explainer .map-diagram { display:block; width:100%; }
+  #minimap-coordinate-explainer .map-diagram text { fill:var(--foreground); font-family:inherit; }
+  #minimap-coordinate-explainer .map-grid { stroke:var(--border); stroke-width:1; fill:none; }
+  #minimap-coordinate-explainer .world-frame { fill:var(--muted); fill-opacity:0.35; stroke:var(--border); stroke-width:1; }
+  #minimap-coordinate-explainer .player-mark { fill:var(--viz-series-1); stroke:var(--background); stroke-width:1.5; }
+  #minimap-coordinate-explainer .landmark-mark { fill:var(--muted-foreground); }
+  #minimap-coordinate-explainer .origin-guide { stroke:var(--muted-foreground); stroke-width:1; stroke-dasharray:3 4; opacity:0.65; fill:none; }
+  #minimap-coordinate-explainer .pivot-mark { stroke:var(--viz-series-2); stroke-width:2; fill:none; }
+  #minimap-coordinate-explainer .camera-range { stroke:var(--viz-series-2); stroke-width:1.5; stroke-dasharray:5 3; fill:none; }
+  #minimap-coordinate-explainer .mm-inputs { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:12px; }
+  #minimap-coordinate-explainer #mm-detail { overflow-wrap:anywhere; margin:6px 0; }
+  @media (max-width:560px) {
+    #minimap-coordinate-explainer .map-pair { grid-template-columns:minmax(0,1fr); }
+    #minimap-coordinate-explainer .mm-world-panel { display:none; }
+    #minimap-coordinate-explainer .mm-mode-field { flex-basis:100%; }
+    #minimap-coordinate-explainer .mm-inputs { grid-template-columns:repeat(2,minmax(0,1fr)); gap:8px; }
+    #minimap-coordinate-explainer .mm-yaw-field { grid-column:1/-1; }
+  }
+  @media (max-height:420px) {
+    #minimap-coordinate-explainer h3 { display:none; }
+    #minimap-coordinate-explainer .mm-heading { margin-bottom:4px; }
+    #minimap-coordinate-explainer .map-pair { margin:4px 0; gap:10px; }
+    #minimap-coordinate-explainer .mm-inputs { gap:8px; }
+    #minimap-coordinate-explainer #mm-detail { margin:3px 0; }
+  }
+  @media (max-width:560px) and (max-height:420px) {
+    #minimap-coordinate-explainer .mm-heading { justify-content:stretch; }
+    #minimap-coordinate-explainer .mm-inputs { grid-template-columns:repeat(3,minmax(0,1fr)); }
+    #minimap-coordinate-explainer .mm-yaw-field { grid-column:auto; }
+    #minimap-coordinate-explainer .mm-legend { display:none; }
+  }
+</style>
+<script>
+(() => {
+  const root = document.getElementById('minimap-coordinate-explainer');
+  if (!root) return;
+  const el = id => root.querySelector('#' + id);
+  const world = el('mm-world');
+  const mini = el('mm-mini');
+  const modeInput = el('mm-mode');
+  const inputs = { x:el('mm-x'), z:el('mm-z'), yaw:el('mm-yaw') };
+  const validModes = ['marker','pivot','pan','camera'];
+  const state = { x:60, z:20, yaw:45, mode:'pan' };
+  const landmarks = [
+    {x:20,z:40,name:'喷泉'},
+    {x:60,z:60,name:'塔楼'},
+    {x:60,z:20,name:'桥'}
+  ];
+  const clean = (value,fallback,min,max) => {
+    const n = Number(value);
+    return Number.isFinite(n) ? Math.max(min,Math.min(max,n)) : fallback;
+  };
+  const number = n => Math.abs(n) < 0.00001 ? '0' : String(Math.round(n*100)/100);
+  function applySaved(snapshot) {
+    const data = snapshot && snapshot.modelContent;
+    if (!data) return;
+    state.x = clean(data.playerWorld && data.playerWorld.x,state.x,0,80);
+    state.z = clean(data.playerWorld && data.playerWorld.z,state.z,0,80);
+    state.yaw = clean(data.cameraYawDegrees,state.yaw,-180,180);
+    if (validModes.includes(data.movementMode)) state.mode=data.movementMode;
+  }
+  if (window.openai) applySaved(window.openai.widgetState);
+
+  function mapping() {
+    const u=state.x/80, v=state.z/80;
+    const mx=(u-0.5)*800, my=(v-0.5)*800;
+    let px=0.5, py=0.5, tx=0, ty=0;
+    if (state.mode==='pivot') { px=u; py=v; }
+    if (state.mode==='pan') { tx=-mx; ty=-my; }
+    const ax=tx+(u-px)*800;
+    const ay=ty+(v-py)*800;
+    return {u,v,mx,my,px,py,tx,ty,ax,ay};
+  }
+
+  function geometry(svg) {
+    const width=Math.max(220,Math.round(svg.getBoundingClientRect().width || 320));
+    const compact=window.innerHeight<=420;
+    const side=Math.max(compact?88:100,Math.min(width-54,compact?96:250));
+    const left=(width-side)/2;
+    const top=20;
+    const height=top+side+25;
+    svg.setAttribute('viewBox','0 0 '+width+' '+height);
+    svg.setAttribute('height',height);
+    return {width,left,top,side,height};
+  }
+
+  function arrow(x,y,yaw) {
+    return '<g transform="translate('+x+','+y+') rotate('+yaw+')">'+
+      '<path class="player-mark" d="M0,-15 L8,8 L0,4 L-8,8 Z"></path>'+
+      '<circle cx="0" cy="0" r="2" fill="var(--background)"></circle></g>';
+  }
+
+  function drawLandmarks(px,py,g,zoomed) {
+    let markup='';
+    for (const point of landmarks) {
+      const x=px(point.x), y=py(point.z);
+      if (x<g.left-4 || x>g.left+g.side+4 || y<g.top-4 || y>g.top+g.side+4) continue;
+      const side=zoomed?7:6;
+      markup+='<rect class="landmark-mark" x="'+(x-side/2)+'" y="'+(y-side/2)+'" width="'+side+'" height="'+side+'"></rect>';
+      if (g.side>=150) {
+        const nearRight=x>g.left+g.side-45;
+        markup+='<text class="text-small" x="'+(x+(nearRight?-8:8))+'" y="'+Math.max(g.top+13,Math.min(g.top+g.side-4,y+14))+'" text-anchor="'+(nearRight?'end':'start')+'">'+point.name+'</text>';
+      }
+    }
+    return markup;
+  }
+
+  function drawWorld() {
+    if (!world.getBoundingClientRect().width) return;
+    const g=geometry(world);
+    const px=x=>g.left+x/80*g.side;
+    const py=z=>g.top+(1-z/80)*g.side;
+    let markup='<title>世界位置</title><desc>角色位于 '+state.x+','+state.z+'。朝向 '+state.yaw+' 度。地标为坐标教学示例。</desc>';
+    markup+='<rect class="world-frame" x="'+g.left+'" y="'+g.top+'" width="'+g.side+'" height="'+g.side+'"></rect>';
+    for (let value=0;value<=80;value+=20) {
+      markup+='<path class="map-grid" d="M'+px(value)+','+g.top+' V'+(g.top+g.side)+' M'+g.left+','+py(value)+' H'+(g.left+g.side)+'"></path>';
+      if (value===0 || value===80 || (value===40 && g.side>=150)) {
+        markup+='<text class="text-small" x="'+px(value)+'" y="'+(g.top+g.side+17)+'" text-anchor="'+(value===0?'start':value===80?'end':'middle')+'">'+value+'</text>';
+        markup+='<text class="text-small" x="'+(g.left-7)+'" y="'+(py(value)+4)+'" text-anchor="end">'+value+'</text>';
+      }
+    }
+    if (state.mode==='camera') {
+      markup+='<rect class="camera-range" x="'+px(state.x-20)+'" y="'+py(state.z+20)+'" width="'+g.side/2+'" height="'+g.side/2+'"></rect>';
+    }
+    markup+=drawLandmarks(px,py,g,false);
+    markup+='<text class="text-small" x="'+g.left+'" y="13">+Z ↑</text>';
+    markup+='<text class="text-small" x="'+(g.left+g.side)+'" y="13" text-anchor="end">+X →</text>';
+    markup+=arrow(px(state.x),py(state.z),state.yaw);
+    world.innerHTML=markup;
+  }
+
+  function drawMini(m) {
+    const g=geometry(mini), cx=g.left+g.side/2, cy=g.top+g.side/2;
+    const viewport=state.mode==='marker'?800:400;
+    const scale=g.side/viewport;
+    const camera=state.mode==='camera';
+    let imageX,imageY,px,py,arrowX,arrowY;
+    if (camera) {
+      const cameraWidth=40, cameraHeight=40;
+      const cameraU=x=>0.5+(x-state.x)/cameraWidth;
+      const cameraV=z=>0.5+(z-state.z)/cameraHeight;
+      px=x=>g.left+cameraU(x)*g.side;
+      py=z=>g.top+(1-cameraV(z))*g.side;
+      imageX=px(0); imageY=py(80);
+      arrowX=px(state.x); arrowY=py(state.z);
+    } else {
+      const pointX=u=>cx+(m.tx+(u-m.px)*800)*scale;
+      const pointY=v=>cy-(m.ty+(v-m.py)*800)*scale;
+      px=x=>pointX(x/80);
+      py=z=>pointY(z/80);
+      imageX=pointX(0); imageY=pointY(1);
+      arrowX=cx+m.ax*scale; arrowY=cy-m.ay*scale;
+    }
+    let markup='<title>'+modeInput.options[modeInput.selectedIndex].text+'</title><desc>逻辑图片为 800×800；显示窗口 '+viewport+'×'+viewport+'。正交相机模式使用投影示意，不是 Unity 场景渲染。</desc>';
+    markup+='<defs><clipPath id="mm-viewport-clip"><rect x="'+g.left+'" y="'+g.top+'" width="'+g.side+'" height="'+g.side+'"></rect></clipPath></defs>';
+    markup+='<g clip-path="url(#mm-viewport-clip)">';
+    markup+='<rect class="world-frame" x="'+imageX+'" y="'+imageY+'" width="'+800*scale+'" height="'+800*scale+'"></rect>';
+    for (let value=0;value<=80;value+=10) {
+      markup+='<path class="map-grid" d="M'+px(value)+','+imageY+' V'+(imageY+800*scale)+' M'+imageX+','+py(value)+' H'+(imageX+800*scale)+'"></path>';
+    }
+    markup+=drawLandmarks(px,py,g,state.mode!=='marker');
+    markup+='<path class="origin-guide" d="M'+g.left+','+cy+' H'+(g.left+g.side)+' M'+cx+','+g.top+' V'+(g.top+g.side)+'"></path>';
+    if (!camera) {
+      markup+='<circle class="pivot-mark" cx="'+(cx+m.tx*scale)+'" cy="'+(cy-m.ty*scale)+'" r="10"></circle>';
+    }
+    markup+=arrow(arrowX,arrowY,state.yaw);
+    markup+='</g>';
+    markup+='<rect class="map-grid" x="'+g.left+'" y="'+g.top+'" width="'+g.side+'" height="'+g.side+'"></rect>';
+    markup+='<text class="text-small" x="'+g.left+'" y="13">北 ↑</text>';
+    markup+='<text class="text-small" x="'+cx+'" y="'+(g.top+g.side+17)+'" text-anchor="middle">'+(camera?'正交投影示意':'箭头 ('+number(m.ax)+', '+number(m.ay)+')')+'</text>';
+    mini.innerHTML=markup;
+  }
+
+  function update() {
+    for (const key of Object.keys(inputs)) inputs[key].value=state[key];
+    modeInput.value=state.mode;
+    const m=mapping();
+    el('mm-x-value').textContent=number(state.x);
+    el('mm-z-value').textContent=number(state.z);
+    el('mm-yaw-value').textContent=number(state.yaw)+'°';
+    el('mm-world-value').textContent='('+number(state.x)+', '+number(state.z)+')';
+    el('mm-mini-label').textContent=state.mode==='camera'?'相机画面示意':'图片小地图';
+    el('mm-viewport-value').textContent='视口 '+(state.mode==='marker'?'800 × 800':'400 × 400');
+    el('mm-pivot-legend').textContent=state.mode==='camera'?'虚线框：相机范围':'○ 图片 Pivot';
+    el('mm-detail').textContent=state.mode==='camera'
+      ? '相机中心 ('+number(state.x)+', '+number(state.z)+') · s=20 · r=1 · 箭头 (0, 0) · UI 角度 '+number(-state.yaw)+'°'
+      : '比例 ('+number(m.u)+', '+number(m.v)+') · Pivot ('+number(m.px)+', '+number(m.py)+') · 地图平移 ('+number(m.tx)+', '+number(m.ty)+') · UI 角度 '+number(-state.yaw)+'°';
+    drawWorld();
+    drawMini(m);
+  }
+
+  function save() {
+    if (!window.openai || !window.openai.setWidgetState) return;
+    window.openai.setWidgetState({
+      modelContent:{playerWorld:{x:state.x,z:state.z},cameraYawDegrees:state.yaw,movementMode:state.mode},
+      privateContent:null
+    }).catch(()=>{});
+  }
+  for (const [key,input] of Object.entries(inputs)) {
+    input.addEventListener('input',()=>{state[key]=Number(input.value);update();});
+    input.addEventListener('change',save);
+  }
+  modeInput.addEventListener('change',()=>{state.mode=modeInput.value;update();save();});
+  window.addEventListener('openai:set_globals',event=>{
+    const globals=event.detail && event.detail.globals;
+    if (globals && globals.widgetState) {applySaved(globals.widgetState);update();}
+  });
+  let measuredWidth=0,measuredHeight=0;
+  const redraw=()=>{
+    const width=root.getBoundingClientRect().width;
+    const height=window.innerHeight;
+    if (width!==measuredWidth || height!==measuredHeight) {
+      measuredWidth=width;measuredHeight=height;update();
+    }
+  };
+  new ResizeObserver(redraw).observe(root);
+  window.addEventListener('resize',redraw);
+  update();
+})();
+</script>

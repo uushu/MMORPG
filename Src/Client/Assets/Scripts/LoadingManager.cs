@@ -18,7 +18,7 @@ public class LoadingManager : MonoBehaviour {
 
 	private IEnumerator Start()
 	{
-		log4net.Config.XmlConfigurator.ConfigureAndWatch(new System.IO.FileInfo("log4net.xmml"));
+		log4net.Config.XmlConfigurator.ConfigureAndWatch(new System.IO.FileInfo("log4net.xml"));
 		UnityLogger.Init();
 		Common.Log.Init("Unity");
 		Common.Log.Info("LoadingManager start");

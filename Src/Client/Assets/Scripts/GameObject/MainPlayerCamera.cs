@@ -15,7 +15,8 @@ public class MainPlayerCamera : MonoSingleton<MainPlayerCamera>
     {
         if (player == null)
         {
-            //player = User.Instance.CurrentCharacterObject;
+            // 对齐自己的角色
+            player = User.Instance.CurrentCharacterObject;
         }
 
         if (player == null)

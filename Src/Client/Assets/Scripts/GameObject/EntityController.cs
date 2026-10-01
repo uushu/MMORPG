@@ -3,8 +3,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Entities;
+using Manager;
 
-public class EntityController : MonoBehaviour /*, IEntityNotify*/
+public class EntityController : MonoBehaviour, IEntityNotify
 {
 
     public Animator anim;
@@ -26,17 +27,23 @@ public class EntityController : MonoBehaviour /*, IEntityNotify*/
 
     public bool isPlayer = false;
 
-    // Use this for initialization
+    
     void Start () {
         if (entity != null)
         {
+            EntityManager.Instance.RegisterEntityChangeNotify(entity.entityId, this);
             this.UpdateTransform();
         }
 
         if (!this.isPlayer)
             rb.useGravity = false;
     }
-
+    public void OnEntityRemoved()
+    {
+        if(UIWorldElementManager.Instance != null)
+            UIWorldElementManager.Instance.RemoveCharNameBar(this.transform);
+        Destroy(this.gameObject);
+    }
     void UpdateTransform()
     {
         this.position = GameObjectTool.LogicToWorld(entity.position);
@@ -92,4 +99,6 @@ public class EntityController : MonoBehaviour /*, IEntityNotify*/
                 break;
         }
     }
+
+    
 }

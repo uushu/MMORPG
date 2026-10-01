@@ -260,6 +260,7 @@ namespace Service
         
         void OnGameLeave(object sender, UserGameLeaveResponse response)
         {
+            MapService.Instance.CurrentMapId = 0;
             Debug.LogFormat("OnGameLeave:{0} [{1}]", response.Result, response.Errormsg);
         }
         

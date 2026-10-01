@@ -1,0 +1,43 @@
+2026-10-01 18:44:35,623 [ 1] INFO  Unity: LoadingManager start
+2026-10-01 18:44:38,630 [ 1] INFO  Unity: DataManager > DataManager()
+2026-10-01 18:44:58,986 [ 1] INFO  Unity: UserLoginRequest::user:hjx psw:22384
+2026-10-01 18:44:58,987 [ 1] INFO  Unity: ConnectToServer() Start
+2026-10-01 18:44:58,990 [ 1] INFO  Unity: DoConnect
+2026-10-01 18:44:58,991 [ 1] INFO  Unity: NetClient.DoConnect on 127.0.0.1:8000
+2026-10-01 18:44:58,992 [ 1] INFO  Unity: Connect[0] to server 127.0.0.1:8000
+
+2026-10-01 18:44:58,994 [ 1] INFO  Unity: LoadingMesager::OnGameServerConnect :0 reason:Success
+2026-10-01 18:44:59,035 [ 1] INFO  Unity: OnUserLogin:Failed [√‹¬Î¥ÌŒÛ]
+2026-10-01 18:45:04,003 [ 1] INFO  Unity: UserLoginRequest::user:hjx psw:223884
+2026-10-01 18:45:04,018 [ 1] INFO  Unity: OnUserLogin:Success [None]
+2026-10-01 18:45:04,019 [ 1] INFO  Unity: LoadLevel: CharacterSelect
+2026-10-01 18:45:04,151 [ 1] INFO  Unity: LevelLoadCompleted:1
+2026-10-01 18:45:05,606 [ 1] INFO  Unity: Select Char:[1]Haily[Archer]
+2026-10-01 18:45:28,704 [ 1] INFO  Unity: UserGameEnterRequest::characterId :0
+2026-10-01 18:45:28,716 [ 1] INFO  Unity: OnGameEnter:Success [None]
+2026-10-01 18:45:28,717 [ 1] INFO  Unity: OnMapCharacterEnter:Map:1 Count:8
+2026-10-01 18:45:28,718 [ 1] INFO  Unity: AddCharacter:1 : Haily Map:1 Entity:SkillBridge.Message.NEntity
+2026-10-01 18:45:28,719 [ 1] INFO  Unity: AddCharacter:2 : Alix Map:1 Entity:SkillBridge.Message.NEntity
+2026-10-01 18:45:28,719 [ 1] INFO  Unity: AddCharacter:1002 : Luck Map:1 Entity:SkillBridge.Message.NEntity
+2026-10-01 18:45:28,719 [ 1] INFO  Unity: AddCharacter:1002 : Luck Map:1 Entity:SkillBridge.Message.NEntity
+2026-10-01 18:45:28,720 [ 1] INFO  Unity: AddCharacter:1002 : Luck Map:1 Entity:SkillBridge.Message.NEntity
+2026-10-01 18:45:28,720 [ 1] INFO  Unity: AddCharacter:1002 : Luck Map:1 Entity:SkillBridge.Message.NEntity
+2026-10-01 18:45:28,720 [ 1] INFO  Unity: AddCharacter:1 : Haily Map:1 Entity:SkillBridge.Message.NEntity
+2026-10-01 18:45:28,720 [ 1] INFO  Unity: AddCharacter:1 : Haily Map:1 Entity:SkillBridge.Message.NEntity
+2026-10-01 18:45:28,721 [ 1] INFO  Unity: LoadLevel: MainCity
+2026-10-01 18:45:28,961 [ 1] INFO  Unity: LevelLoadCompleted:1
+2026-10-01 18:45:30,186 [ 1] INFO  Unity: MoveForward
+2026-10-01 18:45:31,207 [ 1] INFO  Unity: Stop
+2026-10-01 18:45:32,929 [ 1] INFO  Unity: MoveForward
+2026-10-01 18:45:33,358 [ 1] INFO  Unity: Stop
+2026-10-01 18:45:34,480 [ 1] INFO  Unity: MoveForward
+2026-10-01 18:45:35,683 [ 1] INFO  Unity: Stop
+2026-10-01 18:45:42,385 [ 1] INFO  Unity: Character_1_Haily OnDestroy :ID:8 POS:(4067, 2942, 804) DIR:(53, 85, 0) SPD:0 
+2026-10-01 18:45:42,385 [ 1] INFO  Unity: Character_2_Alix OnDestroy :ID:4 POS:(5000, 4000, 820) DIR:(100, 0, 0) SPD:0 
+2026-10-01 18:45:42,385 [ 1] INFO  Unity: Character_1002_Luck OnDestroy :ID:6 POS:(5000, 4000, 820) DIR:(100, 0, 0) SPD:0 
+2026-10-01 18:45:42,386 [ 1] INFO  Unity: OnDestroy NetworkManager.
+2026-10-01 18:45:42,386 [ 1] WARN  Unity: CloseConnection(), errorCode: 1007
+UnityEngine.Debug:LogWarning(Object)
+Network.NetClient:CloseConnection(Int32) (at Assets/Scripts/Network/NetClient.cs:180)
+Network.NetClient:OnDestroy() (at Assets/Scripts/Network/NetClient.cs:175)
+

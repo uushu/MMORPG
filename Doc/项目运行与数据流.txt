@@ -1,0 +1,111 @@
+《极世界》MMORPG：项目组成与运行数据流
+=======================================
+
+先记住这六件事
+--------------
+客户端：收集玩家操作，显示 UI、角色和场景。
+服务端：处理登录、角色和地图规则；决定玩家当前处于什么状态。
+数据库：保存账号和角色等需要长期保留的数据。
+Excel：给开发/策划编辑静态游戏数据。
+JSON 文本：程序启动时读取的静态配置。
+Proto：规定客户端和服务端怎样交换运行中的消息。
+Unity Assets：客户端实际使用的场景、Prefab、模型、材质、音效等资源。
+
+从源码到运行时
+--------------
+配置数据：
+  Src/Data/Tables/*.xlsx
+      → json-excel / Src/Data/Excel2Json.cmd
+      → Src/Data/Data/*.txt（JSON 文本）
+      → 客户端 Data/ 和服务端运行目录 Data/
+      → DataManager 用 Newtonsoft.Json 反序列化
+      → Common.Data 中的类型和内存字典
+      → 客户端或服务端系统查询、使用
+
+共享代码：
+  Src/Lib/Common/**/*.cs ─┐
+                          ├→ Visual Studio 编译 → Common.dll
+  Src/Lib/proto/message.proto → genproto → Protocol/message.cs
+                                      → 编译 → Protocol.dll
+  Common.dll / Protocol.dll
+      → 客户端 Assets/References
+      → 服务端 GameServer 构建输出及其依赖
+
+客户端资源：
+  Assets/Levels/*.unity → Build Settings 启用 → SceneManager 按场景名加载
+  Assets/**/Resources/** → Resources.Load 按资源路径读取 → Instantiate 生成对象
+
+运行时主线
+----------
+服务端进程：
+  Program.Main
+      → 初始化 SQL Server 连接
+      → 读取 Data/ 配置
+      → MapManager 从地图配置建立运行时地图对象
+      → 监听 127.0.0.1:8000
+
+客户端进程：
+  Unity 启动场景 Loding
+      → LoadingManager 先读取 Data/ 配置
+      → 显示登录界面
+      → 玩家登录 / 注册 / 创建或选择角色
+
+一次登录和进入地图：
+  客户端 UserService 创建 Request
+      → NetClient 连接 TCP 服务器
+      → PackageHandler 用 Protobuf 编码消息，并加 4 字节长度
+      → 服务端拆包、解码、分发给 UserService
+      → 服务端查询或写入 SQL 数据库
+      → 客户端收到登录/角色响应并更新本地用户状态
+      → 选择角色后发送 UserGameEnterRequest
+      → 服务端从数据库角色 MapID 找到运行时 Map
+      → Map 发 MapCharacterEnterResponse（mapId、角色信息）
+      → 客户端 MapService 用 mapId 查本地 MapDefine
+      → MapDefine.Resource 作为 Unity 场景名
+      → SceneManager.LoadSceneAsync 加载场景
+      → GameObjectManager 根据 CharacterDefine.Resource 加载角色 Prefab
+      → Resources.Load → Instantiate → 角色出现在场景
+
+两种“资源名”不要混淆
+----------------------
+地图配置的 Resource：场景名称，例如 MainCity。必须有对应 .unity 场景，并加入 Build Settings。
+角色配置的 Resource：Resources 目录内 Prefab 的资源路径。必须能被 Resources.Load 找到。
+模型、材质和贴图由 Prefab/场景引用。场景加载和 Resources.Load 是两条不同的资源查找路径。
+
+最关键的运行条件
+----------------
+1. 当前客户端把 DataPath 设为相对路径 Data/。运行进程的工作目录下必须能找到对应配置文件。
+2. 当前客户端连接地址写为 127.0.0.1:8000，服务端监听 127.0.0.1 和配置端口 8000。这是本机回环地址，默认只适合客户端和服务端在同一台机器运行。
+3. 服务端 App.config 指向 SQL Server 实例 LOCALHOST\MMORPG 和数据库 ExtremWorld；实例、数据库、表结构及连接权限都必须可用。
+4. ID 是配置和存档之间的关联键。数据库角色的 MapID、配置字典键和配置对象 ID 必须对应；被存档引用的 ID 不要随意重编号。
+5. LoadSceneAsync 使用的场景名必须与场景文件匹配，并且场景要加入 Build Settings。当前 MainCity 已存在并启用；配置里的 Map01、Map02、Map03 场景当前未找到。
+6. Resources.Load 的路径必须命中 Resources 文件夹下资源；少文件、错路径或资源名不匹配会导致 Prefab 加载失败。
+7. 客户端和服务端的 Protocol 类型必须兼容。修改协议后两端要使用对应的新 DLL，新增消息还要接通外层 Request/Response、MessageDispatch 和业务处理函数。
+8. 配置和 DLL 在启动/构建时进入程序。改完外部配置要重新运行转换并重启程序；改了 C# 或协议要重新生成对应程序集。
+
+修改时只判断“改的是哪一层”
+----------------------------
+Excel 中已有字段的值或数据行：改 Excel → 转 JSON → 确认运行端的 .txt 更新。
+代码要读取新配置字段：改 Excel → 改对应 Common.Data 类型 → 转 JSON → 编译 Common → 确认 Common.dll 更新。
+网络消息字段：改 message.proto → 运行 genproto → 改发送/接收业务代码 → 编译 Protocol；若 Common 分发或代码也变，再编译 Common。
+新增一种顶层网络消息：还要把它放入 NetMessageRequest/Response，并让 MessageDispatch 分发到订阅的处理函数。
+改客户端 C#：Unity 导入后编译 Assets 内脚本。
+改服务端 C#：重新生成 GameServer。
+改场景：改 Unity 场景；若运行时按名字加载，检查 Build Settings。
+改角色 Prefab：确认 Prefab 位于 Resources 路径下，且 CharacterDefine.Resource 指向该路径。
+
+当前仓库需要特别记住的事实
+--------------------------
+Excel2Json.cmd 的复制清单没有覆盖所有配置文件。它没有复制 TeleporterDefine.txt 和 SpawnPointDefine.txt；但客户端实际读取这两份，服务端实际读取 TeleporterDefine.txt。因此修改这些配置后，单运行该脚本并不能保证运行目录拿到新文件，需要检查并同步目标文件。
+
+配置文件出现在目录里，不代表系统正在使用它。还要确认 DataManager 是否读取、Common 是否有对应类型、业务代码是否查询它。
+
+底层原理，只记这三句
+----------------------
+Excel 是人编辑的数据源；JSON 是程序读取的数据；Common 类型把 JSON 字段映射成可访问的 C# 属性。
+Proto 是通信契约；生成代码负责把对象编码成字节并还原；TCP 只传字节流，所以项目用长度头标记每条消息的边界。
+服务端保存和决定游戏状态；客户端根据服务端给的逻辑 ID，查本地配置并加载具体 Unity 表现资源。
+
+范围说明
+--------
+以上按当前仓库源码、配置和资源目录整理，未启动 SQL Server、GameServer 或 Unity 做运行验证。Unity 编辑器版本记录为 2018.2.3f1。
