@@ -26,23 +26,7 @@ public class PlayerInputController : MonoBehaviour {
     // Use this for initialization
     void Start () {
         state = SkillBridge.Message.CharacterState.Idle;
-        if(this.character == null)
-        {
-            DataManager.Instance.Load();
-            NCharacterInfo cinfo = new NCharacterInfo();
-            cinfo.Id = 1;
-            cinfo.Name = "Test";
-            cinfo.Tid = 1;
-            cinfo.Entity = new NEntity();
-            cinfo.Entity.Position = new NVector3();
-            cinfo.Entity.Direction = new NVector3();
-            cinfo.Entity.Direction.X = 0;
-            cinfo.Entity.Direction.Y = 100;
-            cinfo.Entity.Direction.Z = 0;
-            this.character = new Character(cinfo);
-
-            if (entityController != null) entityController.entity = this.character;
-        }
+        
     }
 
 
@@ -128,8 +112,10 @@ public class PlayerInputController : MonoBehaviour {
 
     void SendEntityEvent(EntityEvent entityEvent)
     {
+        if (character == null || character.entityId <= 0) 
+            return;
         if (entityController != null)
             entityController.OnEntityEvent(entityEvent);
-        //MapService.Instance.SendMapEntitySync(entityEvent,this.character.EntityData);
+        MapService.Instance.SendMapEntitySync(entityEvent,this.character.EntityData);
     }
 }

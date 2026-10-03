@@ -44,6 +44,9 @@ public class EntityController : MonoBehaviour, IEntityNotify
             UIWorldElementManager.Instance.RemoveCharNameBar(this.transform);
         Destroy(this.gameObject);
     }
+
+   
+
     void UpdateTransform()
     {
         this.position = GameObjectTool.LogicToWorld(entity.position);
@@ -98,6 +101,10 @@ public class EntityController : MonoBehaviour, IEntityNotify
                 anim.SetTrigger("Jump");
                 break;
         }
+    }
+    public void OnEntityChanged(Entity entity)
+    {
+        Debug.LogFormat("OnEntityChanged :ID:{0} POS:{1} DIR:{2} SPD:{3} ", this.name, entity.entityId, entity.position, entity.direction);
     }
 
     

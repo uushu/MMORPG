@@ -21,8 +21,8 @@ namespace Network
         public void Disconnected()
         {
             this.PostResponser = null;
-            //if (this.Character != null)
-            //    UserService.Instance.CharacterLeave(this.Character);
+            if (this.Character != null)
+                UserService.Instance.CharacterLeave(this.Character);
         }
 
 

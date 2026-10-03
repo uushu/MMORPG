@@ -2,15 +2,16 @@
 using System.Collections.Generic;
 using Models;
 using Service;
+using UI;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class UIMainCity : MonoBehaviour
+public class UIMain : MonoSingleton<UIMain>
 {
 	public Text name;
 	public Text level;
 
-	void Start()
+	protected override void OnStart()
 	{
 		UpdateInfo();
 	}
@@ -31,6 +32,13 @@ public class UIMainCity : MonoBehaviour
 	{
 		SceneManager.Instance.LoadScene("CharacterSelect");
 		UserService.Instance.SendGameLeave();
+	}
+	public void OnClickUITest()
+	{
+		
+		UITest ui=UIManager.Instance.Show<UITest>();
+		ui.title.text = "测试弹窗";
+		
 	}
 	
 }

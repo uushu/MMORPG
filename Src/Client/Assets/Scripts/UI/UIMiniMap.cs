@@ -11,14 +11,13 @@ public class UIMiniMap : MonoBehaviour
 	public Text mapName;
 	public Image miniMap;
 	public Image arrow;
-	public Collider miniMapBoundBox;
+	private Collider miniMapBoundBox;
 	private Transform playerTransform;
-	public Camera cam;
-
+	
 	void Start()
 	{
-		InitMinimap();
-		cam = Camera.main;
+		MinimapManager.Instance.minimap = this;
+		UpdateMinimap();
 	}
 
 	void Update()
@@ -26,20 +25,20 @@ public class UIMiniMap : MonoBehaviour
 		this.MinimapToMove();
 		
 	}
-	void InitMinimap()
+	public void UpdateMinimap()
 	{
         mapName.text = User.Instance.CurrentMapData.Name;
-		if(this.miniMap.overrideSprite == null)
-            this.miniMap.overrideSprite = MinimapManager.Instance.LoadMinimapRecourese();
+        this.miniMap.overrideSprite = MinimapManager.Instance.LoadMinimapRecourese();
 		this.miniMap.SetNativeSize();
 		this.miniMap.transform.localPosition = Vector3.zero;
-
-		this.playerTransform = User.Instance.CurrentCharacterObject.transform;
-		
+		this.miniMapBoundBox = MinimapManager.Instance.MiniMapBoundBox;
+		this.playerTransform = null;
 	}
 
 	void MinimapToMove()
 	{
+		if(playerTransform == null)
+			playerTransform = MinimapManager.Instance.PlayerTransform;
 		if (miniMapBoundBox == null || playerTransform == null)
 			return;
 		
@@ -58,10 +57,10 @@ public class UIMiniMap : MonoBehaviour
 		#endregion
 		
 		#region 地图移动
-		//方式一 : 修改地图pivot , 相对父节点位置不变
 		RectTransform mapRect = miniMap.rectTransform;
+		//方式一 : 修改地图pivot , 相对父节点位置不变
 		// 改变锚点/参考点
-		// mapRect.pivot = new Vector2(pivotX, pivotY);
+		// mapRect.pivot = new Vector2(u, v);
 		// mapRect.localPosition = Vector2.zero;
 		
 		// 方式二 : 平移地图 ，相对父节点位置改变 ，参考点不变

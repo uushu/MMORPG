@@ -101,9 +101,9 @@ public class GameObjectManager : MonoSingleton<GameObjectManager>
             {
                 User.Instance.CurrentCharacterObject = go;
                 MainPlayerCamera.Instance.player = go;
-                pc.enabled = true;
                 pc.character = character;
                 pc.entityController = ec;
+                pc.enabled = true;
             }
             else
             {
