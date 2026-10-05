@@ -35,9 +35,9 @@ public class NPCController : MonoBehaviour
 	{
 		while (true)
 		{
+			yield return new WaitForSeconds(Random.Range(5f, 10f));
 			if (!inInteractive)
-				yield return new WaitForSeconds(Random.Range(5f, 10f));
-			this.Relax();
+				this.Relax();
 		}
 	}
 
