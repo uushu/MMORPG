@@ -93,7 +93,12 @@ ModelImporter:
     4300000: treasure_poter_item01
     9500000: //RootNode
     13700000: treasure_poter_item01
-  externalObjects: {}
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: 'Material #25'
+    second: {fileID: 2100000, guid: 2a774617c6bbcca45bb722e5ae7f2f57, type: 2}
   materials:
     importMaterials: 1
     materialName: 0

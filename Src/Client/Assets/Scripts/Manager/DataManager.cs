@@ -15,7 +15,7 @@ public class DataManager : Singleton<DataManager>
     public Dictionary<int, CharacterDefine> Characters = null;
     public Dictionary<int, TeleporterDefine> Teleporters = null;
     public Dictionary<int, Dictionary<int, SpawnPointDefine>> SpawnPoints = null;
-    // public Dictionary<int, NpcDefine> Npcs = null;
+    public Dictionary<int, NPCDefine> NPCs = null;
     // public Dictionary<int, ItemDefine> Items = null;
     // public Dictionary<int, ShopDefine> Shops = null;
     // public Dictionary<int, Dictionary<int, ShopItemDefine>> ShopItems = null;
@@ -40,12 +40,12 @@ public class DataManager : Singleton<DataManager>
         json = File.ReadAllText(this.DataPath + "TeleporterDefine.txt");
         this.Teleporters = JsonConvert.DeserializeObject<Dictionary<int, TeleporterDefine>>(json);
 
+        json = File.ReadAllText(this.DataPath + "NpcDefine.txt");
+        this.NPCs = JsonConvert.DeserializeObject<Dictionary<int, NPCDefine>>(json);
+        
         json = File.ReadAllText(this.DataPath + "SpawnPointDefine.txt");
         this.SpawnPoints = JsonConvert.DeserializeObject<Dictionary<int, Dictionary<int, SpawnPointDefine>>> (json);
-
-        // json = File.ReadAllText(this.DataPath + "NpcDefine.txt");
-        // this.Npcs = JsonConvert.DeserializeObject<Dictionary<int, NpcDefine>>(json);
-        //
+        
         // json = File.ReadAllText(this.DataPath + "ItemDefine.txt");
         // this.Items = JsonConvert.DeserializeObject<Dictionary<int, ItemDefine>>(json);
         //
@@ -80,12 +80,15 @@ public class DataManager : Singleton<DataManager>
 
         yield return null;
 
+        json = File.ReadAllText(this.DataPath + "NpcDefine.txt");
+        this.NPCs = JsonConvert.DeserializeObject<Dictionary<int, NPCDefine>>(json);
+        
+        yield return null;
+        
         json = File.ReadAllText(this.DataPath + "SpawnPointDefine.txt");
         this.SpawnPoints = JsonConvert.DeserializeObject<Dictionary<int, Dictionary<int, SpawnPointDefine>>>(json);
 
-        // json = File.ReadAllText(this.DataPath + "NpcDefine.txt");
-        // this.Npcs = JsonConvert.DeserializeObject<Dictionary<int, NpcDefine>>(json);
-        //
+        
         // json = File.ReadAllText(this.DataPath + "ItemDefine.txt");
         // this.Items = JsonConvert.DeserializeObject<Dictionary<int, ItemDefine>>(json);
         //
