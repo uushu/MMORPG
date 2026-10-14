@@ -10,9 +10,8 @@ namespace Models
 {
     class User : Singleton<User>
     {
+        public event Action<long> GoldChanged;
         SkillBridge.Message.NUserInfo userInfo;
-
-
         public SkillBridge.Message.NUserInfo Info
         {
             get { return userInfo; }
@@ -27,10 +26,15 @@ namespace Models
 
         public MapDefine CurrentMapData { get; set; }
 
-        public SkillBridge.Message.NCharacterInfo CurrentCharacter { get; set; }
+        public NCharacterInfo CurrentCharacter { get; set; }
 
         public GameObject CurrentCharacterObject { get; set; }
 
+        public void AddGold(int goldChange)
+        {
+            this.CurrentCharacter.Gold += goldChange;
+            GoldChanged?.Invoke(this.CurrentCharacter.Gold);
+        }
     }
     
 }

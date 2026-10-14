@@ -129,6 +129,12 @@ namespace Network
             }
         }
 
+        public void SendResponse()
+        {
+            byte[] data = session.GetResponse();
+            this.SendData(data, 0, data.Length);
+        }
+
         private void SendCallback(IAsyncResult ar)
         {
             try

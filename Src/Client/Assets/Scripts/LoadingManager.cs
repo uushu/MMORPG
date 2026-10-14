@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using Manager;
 using Service;
 using UnityEngine;
 using UnityEngine.UI;
@@ -37,6 +38,8 @@ public class LoadingManager : MonoBehaviour {
 		
 		MapService.Instance.Init();
 		UserService.Instance.Init();
+		
+		ShopManager.Instance.Init();
 
 		for (float i = 50; i < 100;)
 		{

@@ -5,6 +5,7 @@ using Common.Data;
 using Models;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using Random = UnityEngine.Random;
 
 public class NPCController : MonoBehaviour
@@ -35,9 +36,11 @@ public class NPCController : MonoBehaviour
 	{
 		while (true)
 		{
-			yield return new WaitForSeconds(Random.Range(5f, 10f));
-			if (!inInteractive)
-				this.Relax();
+			if (inInteractive)
+				yield return new WaitForSeconds(6f);
+			else
+				yield return new WaitForSeconds(Random.Range(8f, 15f));
+			this.Relax();
 		}
 	}
 
@@ -48,6 +51,8 @@ public class NPCController : MonoBehaviour
 
 	void OnMouseDown()
 	{
+		if (EventSystem.current.IsPointerOverGameObject())
+			return;
 		Interactive();
 	}
 
@@ -80,8 +85,6 @@ public class NPCController : MonoBehaviour
 		Vector3 faceTo = (User.Instance.CurrentCharacterObject.transform.position - this.transform.position).normalized;
 		while (Mathf.Abs(Vector3.Angle(this.gameObject.transform.forward, faceTo)) > 5f) 
 		{
-			// this.gameObject.transform.forward =
-			// 	Vector3.Lerp(this.gameObject.transform.forward, faceTo, Time.deltaTime * 5f);
 			Quaternion targetRot = Quaternion.LookRotation(faceTo);
 			transform.rotation =Quaternion.Slerp(transform.rotation, targetRot, Time.deltaTime*5f);
 			

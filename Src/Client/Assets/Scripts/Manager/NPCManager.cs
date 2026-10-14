@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using Common.Data;
 using UI;
-using UnityEditor.VersionControl;
-using UnityEngine;
 
 public class NPCManager : Singleton<NPCManager> {
 
@@ -71,12 +69,12 @@ public class NPCManager : Singleton<NPCManager> {
 		{
 			return false;
 		}
-		if(!npcEvents.ContainsKey(npc.Fuction))
+		if(!npcEvents.ContainsKey(npc.Function))
 		{
 			return false;
 		}
 
-		return npcEvents[npc.Fuction](npc);
+		return npcEvents[npc.Function](npc);
 	}
 	private bool DoTaskInteractive(NPCDefine npc)
 	{

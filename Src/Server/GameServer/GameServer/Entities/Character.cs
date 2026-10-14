@@ -2,8 +2,8 @@
 using Common.Data;
 using Common.Utils;
 using GameServer.Core;
-//using GameServer.Managers;
-//using GameServer.Models;
+using GameServer.Managers;
+
 using Network;
 using SkillBridge.Message;
 using System;
@@ -23,9 +23,9 @@ namespace GameServer.Entities
         public TCharacter Data;
 
 
-        //public ItemManager ItemManager;
+        public ItemManager ItemManager;
+        public StatusManager StatusManager;
         //public QuestManager QuestManager;
-        //public StatusManager StatusManager;
         //public FriendManager FriendManager;
 
         //public Team Team;
@@ -47,8 +47,35 @@ namespace GameServer.Entities
             this.Info.Tid = cha.TID;
             this.Info.Class = (CharacterClass)cha.Class;
             this.Info.mapId = cha.MapID;
+            this.Info.Gold = cha.Money;
             this.Info.Entity = this.EntityData;
 
+            this.ItemManager = new ItemManager(this);
+            this.ItemManager.GetItemInfos(this.Info.Items);
+
+            this.Info.Bag = new NBagInfo();
+            this.Info.Bag.unLocked = this.Data.Bag.UnLocked;
+            this.Info.Bag.Items = this.Data.Bag.Items;
+            this.Info.Equips = this.Data.Equips;
+            this.StatusManager = new StatusManager(this);
+
         }
+
+        public long Gold
+        {
+            get
+            {
+                return this.Data.Money;
+            }
+            set
+            {
+                if (this.Data.Money == value)
+                    return;
+                this.StatusManager.AddGoldChange((int)(value - this.Data.Money));
+                this.Data.Money = value;
+            }
+        }
+
+        
     }
 }

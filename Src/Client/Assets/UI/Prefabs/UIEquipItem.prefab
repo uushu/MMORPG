@@ -124,7 +124,7 @@ GameObject:
   - component: {fileID: 222398642765429174}
   - component: {fileID: 114962312881177944}
   - component: {fileID: 114406374496146518}
-  - component: {fileID: 114014195044719222}
+  - component: {fileID: 114713922047572180}
   m_Layer: 5
   m_Name: UIEquipItem
   m_TagString: Untagged
@@ -132,25 +132,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &114014195044719222
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1971211564620592}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f65e31fa767c853468a44d74de7f4f51, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  icon: {fileID: 114506356085456362}
-  title: {fileID: 114655259433605992}
-  level: {fileID: 114404820497541868}
-  limitClass: {fileID: 114435717220561606}
-  limitCategory: {fileID: 114945710472356206}
-  background: {fileID: 114962312881177944}
-  normalBg: {fileID: 21300000, guid: f2c26ba28b4d05643ba74996bb40967b, type: 3}
-  selectedBg: {fileID: 21300000, guid: bb799af4d1f965c4a93f16cb08f26925, type: 3}
 --- !u!114 &114404820497541868
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -313,6 +294,25 @@ MonoBehaviour:
     m_VerticalOverflow: 0
     m_LineSpacing: 1
   m_Text: "\u5C0F\u578B\u836F\u6C34"
+--- !u!114 &114713922047572180
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1971211564620592}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7347bd39c82f69a4bb2ff06a89ee9acd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  icon: {fileID: 114506356085456362}
+  title: {fileID: 114655259433605992}
+  level: {fileID: 114404820497541868}
+  limitClass: {fileID: 114435717220561606}
+  limitCategory: {fileID: 114945710472356206}
+  backGround: {fileID: 114962312881177944}
+  normalBg: {fileID: 21300000, guid: f2c26ba28b4d05643ba74996bb40967b, type: 3}
+  selectedBg: {fileID: 21300000, guid: bb799af4d1f965c4a93f16cb08f26925, type: 3}
 --- !u!114 &114788383145183108
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -510,7 +510,7 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1971211564620592}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
@@ -522,10 +522,10 @@ RectTransform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 116.235, y: -45}
+  m_SizeDelta: {x: 230, y: 90}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &224950742747179174
 RectTransform:

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Common;
+using Manager;
 using Models;
 using Network;
 using UnityEngine;
@@ -246,7 +247,12 @@ namespace Service
 
             if (response.Result == Result.Success)
             {
-               
+                if(response.Character!=null)
+                {
+                    ItemManager.Instance.Init(response.Character.Items);
+                    BagManager.Instance.Init(response.Character.Bag);
+                    EquipManager.Instance.Init(response.Character.Equips);
+                }
             }
         }
         public void SendGameLeave()

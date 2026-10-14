@@ -90,6 +90,11 @@ public class UICharacterSelect : MonoBehaviour
                 uiChars.Add(go);
                 go.SetActive(true);
             }
+
+            if (User.Instance.Info.Player.Characters.Count > 0)
+            {
+	            OnSelectCharacter(0);
+            }
         }
 
        

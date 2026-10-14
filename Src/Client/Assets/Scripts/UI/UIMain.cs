@@ -40,5 +40,13 @@ public class UIMain : MonoSingleton<UIMain>
 		ui.title.text = "测试弹窗";
 		
 	}
+	public void OnClickUIBag()
+	{
+		 UIManager.Instance.Show<UIBag>();
+	}
+	public void OnClickUIEquip()
+	{
+		 UIManager.Instance.Show<UIEquip>();
+	}
 	
 }

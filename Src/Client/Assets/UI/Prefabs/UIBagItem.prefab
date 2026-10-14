@@ -39,7 +39,7 @@ GameObject:
   - component: {fileID: 224319907022830018}
   - component: {fileID: 222746912030569150}
   - component: {fileID: 114102374597679018}
-  - component: {fileID: 114284869822389706}
+  - component: {fileID: 114812790263788574}
   m_Layer: 5
   m_Name: UIBagItem
   m_TagString: Untagged
@@ -107,7 +107,7 @@ MonoBehaviour:
   m_FillAmount: 1
   m_FillClockwise: 1
   m_FillOrigin: 0
---- !u!114 &114284869822389706
+--- !u!114 &114812790263788574
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_CorrespondingSourceObject: {fileID: 0}
@@ -115,11 +115,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 1998580892786704}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c4606698b67667946b1701e06c6a5636, type: 3}
+  m_Script: {fileID: 11500000, guid: bc8ef8bbd798e30468ca3fc626a02bec, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   mainImage: {fileID: 114102374597679018}
-  secondImage: {fileID: 0}
   mainText: {fileID: 114076737114389100}
 --- !u!114 &114845992048530456
 MonoBehaviour:

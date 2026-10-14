@@ -25,5 +25,14 @@ namespace GameServer.Services
 
            
         }
+
+        internal void Save(bool async = false)
+        {
+            // 回档、短时间内大量保存、定时保存（设个保存间隔）
+            if(async)
+                entities.SaveChangesAsync();
+            else
+                entities.SaveChanges();
+        }
     }
 }

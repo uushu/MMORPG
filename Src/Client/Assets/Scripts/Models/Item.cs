@@ -1,0 +1,32 @@
+﻿
+using Common.Data;
+using SkillBridge.Message;
+
+namespace Models
+{
+    public class Item
+    {
+        public int Id;
+        public int Count;
+        public ItemDefine Define;
+        public EquipDefine EquipInfo;
+
+        public Item(int id, int count)
+        {
+            this.Id = id;
+            this.Count = count;
+            DataManager.Instance.Items.TryGetValue(id,out Define);
+            DataManager.Instance.Equips.TryGetValue(id,out EquipInfo);
+            
+        }
+        public Item(NItemInfo item) :this(item.Id, item.Count)
+        {
+           
+        }
+
+        public override string ToString()
+        {
+            return string.Format("Id: {0}, Count: {1}", Id, Count);
+        }
+    }
+}
