@@ -21,6 +21,8 @@ public class UIManager : Singleton<UIManager>
 		this.uiElements.Add(typeof(UIBag),new UIElement(){Resources = "UI/UIBag", Cache = true});
 		this.uiElements.Add(typeof(UIShop),new UIElement(){Resources = "UI/UIShop", Cache = false});
 		this.uiElements.Add(typeof(UIEquip),new UIElement(){Resources = "UI/UIEquip", Cache = false});
+		this.uiElements.Add(typeof(UIQuestSystem),new UIElement(){Resources = "UI/UIQuestSystem", Cache = false});
+		this.uiElements.Add(typeof(UIQuestDialog),new UIElement(){Resources = "UI/UIQuestDialog", Cache = false});
 		
 	}
 

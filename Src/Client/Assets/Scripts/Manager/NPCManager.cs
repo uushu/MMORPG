@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using Common.Data;
+using Manager;
 using UI;
 
 public class NPCManager : Singleton<NPCManager> {
@@ -51,17 +52,26 @@ public class NPCManager : Singleton<NPCManager> {
 	/// <returns></returns>
 	public bool Interactive(NPCDefine npc)
 	{
-		if (npc.Type == NPCType.Functional)
+		if ( DoTaskInteractive(npc))
+		{
+			return true;
+		}
+		else if (npc.Type == NPCType.Functional)
 		{
 			return DoFunctionalInteractive(npc);
 		}
-		else if(npc.Type == NPCType.Task)
-		{
-			return DoTaskInteractive(npc);
-		}
+
 		return false;
 	}
 
+	private bool DoTaskInteractive(NPCDefine npc)
+	{
+		var status = QuestManager.Instance.GetQuestStatus(npc.ID);
+		if (status == NpcQuestStatus.None)
+			return false;
+
+		return QuestManager.Instance.OpenNpcQuest(npc.ID);
+	}
 
 	private bool DoFunctionalInteractive(NPCDefine npc)
 	{
@@ -75,10 +85,5 @@ public class NPCManager : Singleton<NPCManager> {
 		}
 
 		return npcEvents[npc.Function](npc);
-	}
-	private bool DoTaskInteractive(NPCDefine npc)
-	{
-		MessageBox.Show("点击了NPC："+npc.Name);
-		return true;
 	}
 }

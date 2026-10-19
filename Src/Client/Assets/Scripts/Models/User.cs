@@ -11,14 +11,14 @@ namespace Models
     class User : Singleton<User>
     {
         public event Action<long> GoldChanged;
-        SkillBridge.Message.NUserInfo userInfo;
-        public SkillBridge.Message.NUserInfo Info
+        NUserInfo userInfo;
+        public NUserInfo Info
         {
             get { return userInfo; }
         }
 
 
-        public void SetupUserInfo(SkillBridge.Message.NUserInfo info)
+        public void SetupUserInfo(NUserInfo info)
         {
             this.userInfo = info;
         }

@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class UIWorldElement : MonoBehaviour
 {
-	public Transform charOwner;
+	public Transform owner;
 	public float height;
 
 	void Start()
@@ -14,12 +14,13 @@ public class UIWorldElement : MonoBehaviour
 
 	void Update()
 	{
-		if (charOwner != null)
+		if (owner != null)
 		{
-			this.transform.position = charOwner.transform.position + Vector3.up * height;
+			this.transform.position = owner.transform.position + Vector3.up * height;
 		}
 		
-		this.transform.forward = Camera.main.transform.forward;
+		if(Camera.main != null)
+			this.transform.forward = Camera.main.transform.forward;
 	}
 	
 

@@ -190,6 +190,7 @@ message NetMessageRequest{
   ItemEquipRequest itemEquip = 11;
   QuestListRequest questList = 12;
   QuestAcceptRequest questAccept = 13;
+  QuestSubmitRequest questSubmit = 14;
   
 }
 
@@ -209,8 +210,9 @@ message NetMessageResponse{
     ItemEquipResponse itemEquip = 11;
     QuestListResponse questList = 12;
     QuestAcceptResponse questAccept = 13;
-    
-  	StatusNotify statusNotify = 100;
+    QuestSubmitResponse questSubmit = 14;
+
+  StatusNotify statusNotify = 100;
 	
 }
 
@@ -355,6 +357,7 @@ message QuestAcceptResponse
 {
   RESULT result = 1;
   string errormsg = 2;
+  NQuestInfo quest= 3;
 }
 
 message QuestSubmitRequest
@@ -366,6 +369,7 @@ message QuestSubmitResponse
 {
   RESULT result = 1;
   string errormsg = 2;
+  NQuestInfo quest= 3; //更新任务信息到客户端
 }
 
 

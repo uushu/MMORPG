@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Common;
 using Manager;
 using Models;
@@ -10,15 +7,15 @@ using UnityEngine;
 
 using SkillBridge.Message;
 using UI;
-using UnityEngine;
+using UnityEngine.Events;
 
 namespace Service
 {
     public class UserService :Singleton<UserService> ,IDisposable
     {
-        public UnityEngine.Events.UnityAction<Result, string> OnLogin;
-        public UnityEngine.Events.UnityAction<Result, string> OnRegister;
-        public UnityEngine.Events.UnityAction<Result, string> OnCharacterCreate;
+        public UnityAction<Result, string> OnLogin;
+        public UnityAction<Result, string> OnRegister;
+        public UnityAction<Result, string> OnCharacterCreate;
         
 
         private NetMessage pendingMessage = null;
@@ -249,9 +246,11 @@ namespace Service
             {
                 if(response.Character!=null)
                 {
+                    User.Instance.CurrentCharacter = response.Character;
                     ItemManager.Instance.Init(response.Character.Items);
                     BagManager.Instance.Init(response.Character.Bag);
                     EquipManager.Instance.Init(response.Character.Equips);
+                    QuestManager.Instance.Init(response.Character.Quests);
                 }
             }
         }

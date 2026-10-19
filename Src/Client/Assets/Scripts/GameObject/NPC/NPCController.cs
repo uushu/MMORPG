@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using Common.Data;
+using Manager;
 using Models;
 using UnityEditor;
 using UnityEngine;
@@ -11,7 +12,7 @@ using Random = UnityEngine.Random;
 public class NPCController : MonoBehaviour
 {
 
-	public int NPCID;
+	public int npcId;
 
 	private Animator anim;
 
@@ -20,16 +21,38 @@ public class NPCController : MonoBehaviour
 
 	private SkinnedMeshRenderer renderer;
 	Color originColor;
+	private NpcQuestStatus questStatus;
 
 	private void Start()
 	{
 		anim = GetComponent<Animator>();
-		npc = NPCManager.Instance.GetNPCDefine(NPCID);
+		npc = NPCManager.Instance.GetNPCDefine(npcId);
 		//骨骼动画渲染器
 		renderer = GetComponentInChildren<SkinnedMeshRenderer>();
 		originColor = renderer.sharedMaterial.color;
 
 		StartCoroutine(ActionRelax());
+
+		RefreshQuestStatus();
+		QuestManager.Instance.onQuestStatusChanged += OnQuestStatusChanged;
+	}
+
+	void OnQuestStatusChanged(Quest quest)
+	{
+		this.RefreshQuestStatus();
+	}
+
+	private void RefreshQuestStatus()
+	{
+		questStatus = QuestManager.Instance.GetQuestStatus(this.npcId);
+		UIWorldElementManager.Instance.AddNpcQuestStatus(this.transform,questStatus);
+	}
+
+	private void OnDestroy()
+	{
+		QuestManager.Instance.onQuestStatusChanged -= OnQuestStatusChanged;
+		if(UIWorldElementManager .Instance != null)
+			UIWorldElementManager.Instance.RemoveNpcStatus(this.transform);
 	}
 
 	private IEnumerator ActionRelax()
