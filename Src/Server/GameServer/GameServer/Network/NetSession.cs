@@ -16,7 +16,7 @@ namespace Network
         public TUser User { get; set; }
         public Character Character { get; set; }
         public NEntity Entity { get; set; }
-        public IPostResponser PostResponser { get; set; }
+        public IPostResponser PostResponser { get; set; }   // 响应后处理器
 
         public void Disconnected()
         {
@@ -46,9 +46,9 @@ namespace Network
         {
             if (response != null)
             {
-                if (this.Character != null && this.Character.StatusManager.HasStatus)
+                if(PostResponser != null)
                 {
-                    this.Character.StatusManager.ApplyResponse(Response);
+                    this.PostResponser.PostProcess(Response);
                 }
 
                 byte[] data = PackageHandler.PackMessage(response);

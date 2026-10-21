@@ -31,13 +31,10 @@ namespace GameServer.Services
 
         internal void SendEntitySyncUpdate(NetConnection<NetSession> connection, NEntitySync entitySync)
         {
-            NetMessage message = new NetMessage();
-            message.Response = new NetMessageResponse();
-            message.Response.mapEntitySync = new MapEntitySyncResponse();
-            message.Response.mapEntitySync.entitySyncs.Add(entitySync);
+            connection.Session.Response.mapEntitySync = new MapEntitySyncResponse();
+            connection.Session.Response.mapEntitySync.entitySyncs.Add(entitySync);
 
-            byte[] data =PackageHandler.PackMessage(message);
-            connection.SendData(data, 0, data.Length);
+            connection.SendResponse();
         }
         private void OnMapEntitySync(NetConnection<NetSession> sender, MapEntitySyncRequest request)
         {

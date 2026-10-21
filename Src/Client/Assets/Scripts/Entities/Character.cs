@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Models;
 using SkillBridge.Message;
 using UnityEngine;
 
@@ -12,6 +13,11 @@ namespace Entities
         public NCharacterInfo Info;
 
         public Common.Data.CharacterDefine Define;
+
+        public int Id
+        {
+            get { return this.Info.Id; }
+        }
 
         public string Name
         {
@@ -26,13 +32,23 @@ namespace Entities
 
         public bool IsPlayer
         {
-            get { return this.Info.Id == Models.User.Instance.CurrentCharacter.Id; }
+            get { return this.Info.Type == CharacterType.Player; }
+        }
+
+        public bool IsCurrentPlayer
+        {
+            get
+            {
+                if (!IsPlayer)
+                    return false;
+                return this.Info.Id == User.Instance.CurrentCharacter.Id;
+            }
         }
 
         public Character(NCharacterInfo info) : base(info.Entity)
         {
             this.Info = info;
-            this.Define = DataManager.Instance.Characters[info.Tid];
+            this.Define = DataManager.Instance.Characters[info.ConfigId];
         }
 
         public void MoveForward()

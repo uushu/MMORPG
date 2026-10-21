@@ -18,7 +18,7 @@ namespace GameServer.Entities
     /// Character
     /// 玩家角色类
     /// </summary>
-    class Character : CharacterBase
+    class Character : CharacterBase ,IPostResponser
     {
         public TCharacter Data;
 
@@ -26,7 +26,7 @@ namespace GameServer.Entities
         public ItemManager ItemManager;
         public StatusManager StatusManager;
         public QuestManager QuestManager;
-        //public FriendManager FriendManager;
+        public FriendManager FriendManager;
 
         //public Team Team;
         //public double TeamUpdateTS;
@@ -39,16 +39,19 @@ namespace GameServer.Entities
             base(new Core.Vector3Int(cha.MapPosX, cha.MapPosY, cha.MapPosZ),new Core.Vector3Int(100,0,0))
         {
             this.Data = cha;
+            this.Id = cha.ID;
             this.Info = new NCharacterInfo();
             this.Info.Type = type;
             this.Info.Id = cha.ID;
+            this.Info.EntityId = this.entityId;
             this.Info.Name = cha.Name;
-            this.Info.Level = 1;//cha.Level;
-            this.Info.Tid = cha.TID;
+            this.Info.Level = 1;    //cha.Level;
+            this.Info.ConfigId = cha.TID;
             this.Info.Class = (CharacterClass)cha.Class;
             this.Info.mapId = cha.MapID;
             this.Info.Gold = cha.Money;
             this.Info.Entity = this.EntityData;
+            this.Define = DataManager.Instance.Characters[this.Info.ConfigId];
 
             this.ItemManager = new ItemManager(this);
             this.ItemManager.GetItemInfos(this.Info.Items);
@@ -62,6 +65,9 @@ namespace GameServer.Entities
 
             this.QuestManager = new QuestManager(this);
             this.QuestManager.GetQuestInfos(this.Info.Quests);
+
+            this.FriendManager = new FriendManager(this);
+            this.FriendManager.GetFriendInfos(this.Info.Friends);
         }
 
         public long Gold
@@ -79,6 +85,26 @@ namespace GameServer.Entities
             }
         }
 
-        
+        /// <summary>
+        /// 各种后处理信息
+        /// </summary>
+        /// <param name="message"></param>
+        public void PostProcess(NetMessageResponse message)
+        {
+            this.FriendManager.PostProgress(message);
+            if(this.StatusManager.HasStatus)
+            {
+                this.StatusManager.PostProgress(message);
+            }
+        }
+
+        /// <summary>
+        /// 角色离开时调用
+        /// </summary>
+        internal void Clear()
+        {
+            // 把自己的信息更新到好友管理器中
+            this.FriendManager.UpdateFriendInfo(this.Info, 0);
+        }
     }
 }

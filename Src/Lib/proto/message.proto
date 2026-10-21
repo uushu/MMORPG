@@ -107,19 +107,21 @@ message NPlayerInfo {
 }
 
 message NCharacterInfo {
-	int32 id = 1;
-	int32 tid = 2;
-	string name = 3;
-	CHARACTER_TYPE type = 4;
-	CHARACTER_CLASS class = 5;
-	int32 level = 6;
-	int32 mapId = 7;
-	NEntity entity = 8;
-  	int64  gold = 9;
-  	repeated NItemInfo Items = 10; // 角色拥有的所有道具
-  	NBagInfo bag = 11;
-    bytes Equips = 12;
-    repeated NQuestInfo quests = 13; // 任务列表
+	int32 id = 1;  // dbID
+  int32 config_id = 2; // configID
+	int32 entity_id = 3; // entityID
+	string name = 4;
+	CHARACTER_TYPE type = 5;
+	CHARACTER_CLASS class = 6;
+	int32 level = 7;
+	int32 mapId = 8;
+	NEntity entity = 9;
+  	int64  gold = 10;
+  	repeated NItemInfo Items = 11; // 角色拥有的所有道具
+  	NBagInfo bag = 12;
+    bytes Equips = 13;
+    repeated NQuestInfo quests = 14; // 任务列表
+    repeated NFriendInfo friends = 15; // 好友列表
 }
 
 message NItemInfo
@@ -192,6 +194,11 @@ message NetMessageRequest{
   QuestAcceptRequest questAccept = 13;
   QuestSubmitRequest questSubmit = 14;
   
+  FriendAddRequest friendAddReq = 15;
+  FriendAddResponse friendAddRep = 16;
+  FriendListRequest friendList = 17;
+  FriendRemoveRequest friendRemove = 18;
+  
 }
 
 message NetMessageResponse{
@@ -211,6 +218,12 @@ message NetMessageResponse{
     QuestListResponse questList = 12;
     QuestAcceptResponse questAccept = 13;
     QuestSubmitResponse questSubmit = 14;
+    
+    FriendAddRequest friendAddReq = 15;
+    FriendAddResponse friendAddRep = 16;
+    FriendListResponse friendList = 17;
+    FriendRemoveResponse friendRemove = 18;
+    
 
   StatusNotify statusNotify = 100;
 	
@@ -309,6 +322,41 @@ message ItemEquipResponse
   string errormsg = 2;
 }
 
+
+// Map Protocol
+message MapCharacterEnterRequest
+{
+	int32 mapId = 1;
+}
+
+message MapCharacterEnterResponse
+{
+	int32 mapId = 1;
+	repeated NCharacterInfo characters = 2;
+}
+
+message MapCharacterLeaveResponse
+{
+	int32 entityId = 1;
+}
+
+
+message MapEntitySyncRequest
+{
+    NEntitySync entitySync = 1;
+}
+
+
+message MapEntitySyncResponse
+{
+    repeated NEntitySync entitySyncs = 2;
+}
+
+message MapTeleportRequest
+{
+	int32 teleporterId = 1;
+}
+
 // Quest System
 enum QUEST_STATUS
 {
@@ -316,7 +364,7 @@ enum QUEST_STATUS
   COMPLETED = 1; // 已完成，未提交
   FINISHED = 2; // 已完成，已提交
   FAILED = 3; // 已失败
-  
+
 }
 
 enum QUEST_LIST_TYPE
@@ -338,7 +386,7 @@ message NQuestInfo
 message QuestListRequest
 {
   QUEST_LIST_TYPE type = 1;
-  
+
 }
 
 message QuestListResponse
@@ -385,36 +433,52 @@ message QuestRejectResponse
 }
 
 
-// Map Protocol
-message MapCharacterEnterRequest
+// Friend System
+message NFriendInfo
 {
-	int32 mapId = 1;
+  int32  id = 1;
+  NCharacterInfo friendInfo = 2;
+  int32 status = 3;
+  
 }
 
-message MapCharacterEnterResponse
+message FriendAddRequest
 {
-	int32 mapId = 1;
-	repeated NCharacterInfo characters = 2;
+  int32 from_id = 1;
+  string from_name = 2;
+  int32 to_id = 3;
+  string to_name = 4;
 }
 
-message MapCharacterLeaveResponse
+message FriendAddResponse
 {
-	int32 characterId = 1;
+  RESULT result = 1;
+  string errormsg = 2;
+  FriendAddRequest request = 3; // 需要记录请求信息
 }
 
-
-message MapEntitySyncRequest
+message FriendListRequest
 {
-    NEntitySync entitySync = 1;
+  
 }
 
-
-message MapEntitySyncResponse
+message FriendListResponse
 {
-    repeated NEntitySync entitySyncs = 2;
+  RESULT result = 1;
+  string errormsg = 2;
+  repeated NFriendInfo friends = 3;
 }
 
-message MapTeleportRequest
+message FriendRemoveRequest
 {
-	int32 teleporterId = 1;
+  int32 id = 1;
+  int32 friendId = 2;
+}
+
+message FriendRemoveResponse
+{
+  RESULT result = 1;
+  string errormsg = 2;
+  int32 id = 3;
+  
 }

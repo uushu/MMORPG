@@ -57,7 +57,7 @@ namespace Service
         public void ConnectToServer()
         {
             Debug.Log("ConnectToServer() Start");
-            NetClient.Instance.Init("127.0.0.1",8000);
+            NetClient.Instance.Init("127.0.0.1",8100);
             NetClient.Instance.Connect();
         }
 
@@ -251,6 +251,7 @@ namespace Service
                     BagManager.Instance.Init(response.Character.Bag);
                     EquipManager.Instance.Init(response.Character.Equips);
                     QuestManager.Instance.Init(response.Character.Quests);
+                    FriendManager.Instance.Init(response.Character.Friends);
                 }
             }
         }

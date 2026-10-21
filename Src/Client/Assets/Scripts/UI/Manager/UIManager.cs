@@ -23,6 +23,7 @@ public class UIManager : Singleton<UIManager>
 		this.uiElements.Add(typeof(UIEquip),new UIElement(){Resources = "UI/UIEquip", Cache = false});
 		this.uiElements.Add(typeof(UIQuestSystem),new UIElement(){Resources = "UI/UIQuestSystem", Cache = false});
 		this.uiElements.Add(typeof(UIQuestDialog),new UIElement(){Resources = "UI/UIQuestDialog", Cache = false});
+		this.uiElements.Add(typeof(UIFriend),new UIElement(){Resources = "UI/UIFriend", Cache = false});
 		
 	}
 

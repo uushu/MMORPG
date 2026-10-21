@@ -18,9 +18,9 @@ public class DataManager : Singleton<DataManager>
     public Dictionary<int, ItemDefine> Items = null;
     public Dictionary<int, ShopDefine> Shops = null;
     public Dictionary<int, Dictionary<int, ShopItemDefine>> ShopItems = null;
-    public Dictionary<int, Dictionary<int, SpawnPointDefine>> SpawnPoints = null;
     public Dictionary<int, EquipDefine> Equips = null;
     public Dictionary<int, QuestDefine> Quests = null;
+    public Dictionary<int, Dictionary<int, SpawnPointDefine>> SpawnPoints = null;
     // public Dictionary<int, RideDefine> Rides = null; 
 
     public DataManager()

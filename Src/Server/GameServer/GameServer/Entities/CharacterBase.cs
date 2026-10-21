@@ -1,5 +1,7 @@
 ﻿using Common.Data;
 using GameServer.Core;
+using GameServer.Managers;
+
 //using GameServer.Managers;
 using SkillBridge.Message;
 using System;
@@ -13,13 +15,7 @@ namespace GameServer.Entities
     class CharacterBase : Entity
     {
 
-        public int Id
-        {
-            get
-            {
-                return this.entityId;
-            }
-        }
+        public int Id { get; set; }
         public NCharacterInfo Info;
         public CharacterDefine Define;
 
@@ -28,15 +24,16 @@ namespace GameServer.Entities
 
         }
 
-        public CharacterBase(CharacterType type, int tid, int level, Vector3Int pos, Vector3Int dir) :
+        public CharacterBase(CharacterType type, int config, int level, Vector3Int pos, Vector3Int dir) :
            base(pos, dir)
         {
             this.Info = new NCharacterInfo();
             this.Info.Type = type;
             this.Info.Level = level;
-            this.Info.Tid = tid;
+            this.Info.ConfigId = config;
             this.Info.Entity = this.EntityData;
-
+            this.Info.EntityId = this.entityId;
+            this.Define = DataManager.Instance.Characters[this.Info.ConfigId];
             this.Info.Name = this.Define.Name;
         }
     }

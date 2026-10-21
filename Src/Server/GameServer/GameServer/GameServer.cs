@@ -33,7 +33,7 @@ namespace GameServer
             UserService.Instance.Init();
             ItemService.Instance.Init();
             QuestService.Instance.Init();
-            //FriendService.Instance.Init();
+            FriendService.Instance.Init();
             //TeamService.Instance.Init();
             //GuildService.Instance.Init();
             //ChatService.Instance.Init();
@@ -58,14 +58,18 @@ namespace GameServer
             network.Stop();
         }
 
+        // GameServer 的一个主线程，每一百毫秒跑一帧
         public void Update()
         {
+            var mapManager = MapManager.Instance;
             while (running)
             {
                 Time.Tick();
                 Thread.Sleep(100);
                 //Console.WriteLine("{0} {1} {2} {3} {4}", Time.deltaTime, Time.frameCount, Time.ticks, Time.time, Time.realtimeSinceStartup);
+                mapManager.Update();
             }
+          
         }
     }
 }
