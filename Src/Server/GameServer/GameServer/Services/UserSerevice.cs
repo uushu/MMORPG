@@ -203,6 +203,7 @@ namespace GameServer.Services
         {
             Log.InfoFormat("CharacterLeave: characterID:{0} name:{1} ", character.Id, character.Info.Name);
             CharacterManager.Instance.RemoveCharacter(character.Id);
+            FriendService.Instance.RemovePendingRequests(character.Id);
             MapManager.Instance[character.Info.mapId].CharacterLeave(character);
             character.Clear();
         }

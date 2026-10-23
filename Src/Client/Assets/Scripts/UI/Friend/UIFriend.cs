@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using Manager;
 using Models;
@@ -18,6 +19,12 @@ public class UIFriend : UIWindow {
 		FriendService.Instance.OnFriendUpdate = RefreshUI;
 		this.list.onItemSelected += this.OnFriendSelected;
 		RefreshUI();
+	}
+
+	private void OnDestroy()
+	{
+		list.onItemSelected -= this.OnFriendSelected;
+		FriendService.Instance.OnFriendUpdate -= RefreshUI;
 	}
 
 	private void OnFriendSelected(ListView.ListViewItem item)

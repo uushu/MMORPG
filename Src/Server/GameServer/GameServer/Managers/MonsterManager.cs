@@ -25,7 +25,7 @@ namespace GameServer.Managers
             EntityManager.Instance.AddEntity(this.Map.ID, monster);
             monster.Info.Id = monster.entityId;
             monster.Info.mapId = this.Map.ID;
-            Monsters[Map.ID] = monster;
+            Monsters[monster.entityId] = monster;
 
             this.Map.MonsterEnter(monster);
             return monster;

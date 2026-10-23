@@ -13,6 +13,9 @@ namespace GameServer.Services
 {
     internal class FriendService : Singleton<FriendService>
     {
+        private readonly object _lock = new object();
+
+        readonly Dictionary<Tuple<int, int>, FriendAddRequest> pendingFriendAddReqs = new Dictionary<Tuple<int, int>, FriendAddRequest>();
         public FriendService()
         {
             MessageDistributer<NetConnection<NetSession>>.Instance.Subscribe<FriendAddRequest>(this.OnFriendAddRequest);
@@ -26,7 +29,6 @@ namespace GameServer.Services
             
         }
 
-        // public void SendFriendAddResponse()
 
         /// <summary>
         /// 收到添加好友请求
@@ -37,54 +39,61 @@ namespace GameServer.Services
 
         private void OnFriendAddRequest(NetConnection<NetSession> sender, FriendAddRequest request)
         {
-            // 当前角色
-            Character character = sender.Session.Character;
-            Log.InfoFormat("OnFriendRequest: FromId{0} FromName{1} ToId{2} ToName{3}", request.FromId, request.FromName, request.ToId, request.ToName);
-
-            // 1. 查找好友ID
-            if(request.ToId ==0)
+            lock(_lock)
             {
-                // 用好友名称查找 ,只处理在线角色
-                foreach(var cha in CharacterManager.Instance.Characters)
+                // 当前角色
+                Character character = sender.Session.Character;
+                Log.InfoFormat("OnFriendRequest: FromId{0} FromName{1} ToId{2} ToName{3}", request.FromId, request.FromName, request.ToId, request.ToName);
+
+                // 1. 查找好友ID
+                if (request.ToId == 0)
                 {
-                    if(cha.Value.Data.Name == request.ToName)
+                    // 用好友名称查找 ,只处理在线角色
+                    foreach (var cha in CharacterManager.Instance.Characters)
                     {
-                        request.ToId = cha.Key;
-                        break;
+                        if (cha.Value.Data.Name == request.ToName)
+                        {
+                            request.ToId = cha.Key;
+                            break;
+                        }
+                    }
+                    // TODO: 离线查询，到数据库中查找
+                }
+                // 2. 判断是否已成为好友，并查找好友的Session
+                if (request.ToId > 0)
+                {
+                    if (character.FriendManager.GetFriendInfo(request.ToId) != null)
+                    {
+                        SendFriendAddResult(sender,request,Result.Failed, "你们已经是好友了");
+                        return;
                     }
                 }
-                // TODO: 离线查询，到数据库中查找
-            }
-            // 2. 判断是否已成为好友，并查找好友的Session
-            NetConnection<NetSession> friend = null;
-            if (request.ToId>0)
-            {
-                if(character.FriendManager.GetFriendInfo(request.ToId) != null)
+
+                // 3. 判断好友是否离线或不存在
+                NetConnection<NetSession> friend = SessionManager.Instance.GetSession(request.ToId);
+                if (friend == null || CharacterManager.Instance.GetCharacter(request.ToId)==null)
                 {
-                    sender.Session.Response.friendAddRep = new FriendAddResponse();
-                    sender.Session.Response.friendAddRep.Result = Result.Failed;
-                    sender.Session.Response.friendAddRep.Errormsg = "你们已经是好友了";
-                    sender.SendResponse();
+                    SendFriendAddResult(sender, request, Result.Failed, "好友不存在或已离线"); 
                     return;
                 }
 
-                friend = SessionManager.Instance.GetSession(request.ToId);
-                 
-            }
-            // 3. 判断好友是否离线或不存在
-            if(friend == null)
-            {
-                sender.Session.Response.friendAddRep = new FriendAddResponse();
-                sender.Session.Response.friendAddRep.Result = Result.Failed;
-                sender.Session.Response.friendAddRep.Errormsg = "好友不存在或已离线";
-                sender.SendResponse();
-                return;
-            }
+                // 4.是否重复发送申请
+                var key = Tuple.Create(character.Id, request.ToId);
+                if(pendingFriendAddReqs.ContainsKey(key))
+                {
+                    SendFriendAddResult(sender, request, Result.Failed, "申请已发送，等待对方处理");
+                    return;
+                }
 
-            // 4. 服务器把当前请求发送到好友的申请请求
-            Log.InfoFormat("ForFriendAddRequest: FromID{0} FromName{1} ToId{2} ToName{3}", request.FromId, request.FromName, request.ToId, request.ToName);
-            friend.Session.Response.friendAddReq = request;
-            friend.SendResponse();
+                request.ToName = friend.Session.Character.Data.Name;
+                pendingFriendAddReqs[key] = request;
+
+                // 5. 服务器转发申请
+                Log.InfoFormat("ForFriendAddRequest: FromID{0} FromName{1} ToId{2} ToName{3}", request.FromId, request.FromName, request.ToId, request.ToName);
+                
+                friend.Session.Response.friendAddReq = request;
+                friend.SendResponse();
+            }
          
         }
 
@@ -96,47 +105,75 @@ namespace GameServer.Services
         /// <exception cref="NotImplementedException"></exception>
         private void OnFriendAddResponse(NetConnection<NetSession> sender, FriendAddResponse response)
         {
-            Character character = sender.Session.Character;
-            Log.InfoFormat("OnFriendAddResponse: character{0} Result{1} FromId{2} FromName{3} ToId{4} ToName{5}", character.Id, response.Result, response.Request.FromId, response.Request.FromName, response.Request.ToId, response.Request.ToName);
-            sender.Session.Response.friendAddRep = response;
-            if(response.Result == Result.Success)
+            lock(_lock)
             {
-                var requester = SessionManager.Instance.GetSession(response.Request.FromId);
-                if (requester == null)
-                {
-                    sender.Session.Response.friendAddRep.Result = Result.Failed;
-                    sender.Session.Response.friendAddRep.Errormsg = "请求者已下线";
-                }
+                Character character = sender.Session.Character;
+           
+                // 查询申请是否存在
+                var key = Tuple.Create(response.Request.FromId, character.Id);
+                FriendAddRequest request;
+                if (!pendingFriendAddReqs.TryGetValue(key, out request))
+                    return;
 
+                pendingFriendAddReqs.Remove(key);
+                response.Request= request;
+
+                // 双方相互申请添加好友时，查看是否已经建立了好友关系
+                if (response.Result == Result.Success && character.Data.Friends.Any(item => item.FriendID == request.FromId))
+                    return;
+
+                Log.InfoFormat("OnFriendAddResponse: character{0} Result{1} FromId{2} FromName{3} ToId{4} ToName{5}", character.Id, response.Result, response.Request.FromId, response.Request.FromName, response.Request.ToId, response.Request.ToName);
+                sender.Session.Response.friendAddRep = response;
+
+                var requester = SessionManager.Instance.GetSession(response.Request.FromId);
+                
+                if (response.Result == Result.Success)
+                {
+                    
+                    if (requester == null || CharacterManager.Instance.GetCharacter(request.FromId)==null)
+                    {
+                        sender.Session.Response.friendAddRep.Result = Result.Failed;
+                        sender.Session.Response.friendAddRep.Errormsg = "请求者已下线";
+                    }
+
+                    else
+                    {
+                        character.FriendManager.AddFriend(requester.Session.Character);
+                        requester.Session.Character.FriendManager.AddFriend(character);
+                        DBService.Instance.Save();
+                        requester.Session.Response.friendAddRep = response;
+                        requester.Session.Response.friendAddRep.Result = Result.Success;
+                        requester.Session.Response.friendAddRep.Errormsg = "添加好友成功";
+                        requester.SendResponse();
+                    }
+
+                }
                 else
                 {
-                    character.FriendManager.AddFriend(requester.Session.Character);
-                    requester.Session.Character.FriendManager.AddFriend(character);
-                    DBService.Instance.Save();
-                    requester.Session.Response.friendAddRep = response;
-                    requester.Session.Response.friendAddRep.Result = Result.Success;
-                    requester.Session.Response.friendAddRep.Errormsg = "添加好友成功";
-                    requester.SendResponse();
-                }
-                
-            }
-            else
-            {
-                response.Errormsg = "已拒绝" + response.Request.FromName + "的好友申请";
+                    response.Errormsg = "已拒绝" + response.Request.FromName + "的好友申请";
 
-                var requester = SessionManager.Instance.GetSession(response.Request.FromId);
-                if (requester !=null)
-                {
-                    requester.Session.Response.friendAddRep = new FriendAddResponse
+               
+                    if (requester != null)
                     {
-                        Result = Result.Failed,
-                        Errormsg = character.Data.Name + "拒绝了你的好友申请"
-                    };
-                    sender.SendResponse();
+                        SendFriendAddResult(requester,request,Result.Failed, character.Data.Name + "拒绝了你的好友申请");
+                       
+                    }
                 }
-            }
                 sender.SendResponse();
+            }
         }
+
+        private void SendFriendAddResult(NetConnection<NetSession> connection , FriendAddRequest request, Result result,string message)
+        {
+            connection.Session.Response.friendAddRep = new FriendAddResponse();
+            connection.Session.Response.friendAddRep.Request = request;
+            connection.Session.Response.friendAddRep.Result = result;
+            connection.Session.Response.friendAddRep.Errormsg = message;
+
+            connection.SendResponse();
+        }
+
+
         private void OnFriendRemoveRequest(NetConnection<NetSession> sender, FriendRemoveRequest request)
         {
             Character character = sender.Session.Character;
@@ -144,12 +181,13 @@ namespace GameServer.Services
             sender.Session.Response.friendRemove = new FriendRemoveResponse();
             sender.Session.Response.friendRemove.Id = request.Id;
 
+            NetConnection<NetSession> friend = SessionManager.Instance.GetSession(request.friendId);
             // 删除自己的好友
             if (character.FriendManager.RemoveFriendById(request.Id))
             {
                 sender.Session.Response.friendRemove.Result = Result.Success;
+                
                 //删除好友中的自己
-                var friend = SessionManager.Instance.GetSession(request.friendId);
                 // 好友在线
                 if (friend != null)
                 {
@@ -163,6 +201,11 @@ namespace GameServer.Services
             else
                 sender.Session.Response.friendRemove.Result = Result.Failed;
             DBService.Instance.Save();
+
+            if(friend != null)
+            {
+                friend.SendResponse();
+            }
             sender.SendResponse();
         }
 
@@ -173,8 +216,22 @@ namespace GameServer.Services
             {
                 DBService.Instance.Entities.CharacterFriends.Remove(removeItem);
             }
+        }
 
-
+        /// <summary>
+        /// 清除发给接受者的待处理申请请求
+        /// </summary>
+        /// <param name="characterId"></param>
+        public void RemovePendingRequests(int characterId)
+        {
+            lock(_lock)
+            {
+                var keys = pendingFriendAddReqs.Keys.Where(key => key.Item2 == characterId).ToList();
+                foreach(var key in keys)
+                {
+                    pendingFriendAddReqs.Remove(key);
+                }
+            }
         }
     }
 }
