@@ -17,13 +17,17 @@ public class UIManager : Singleton<UIManager>
 
 	public UIManager()
 	{
-		this.uiElements.Add(typeof(UITest),new UIElement(){ Resources = "UI/UITest", Cache = true});
+		// this.uiElements.Add(typeof(UITest),new UIElement(){ Resources = "UI/UITest", Cache = true});
 		this.uiElements.Add(typeof(UIBag),new UIElement(){Resources = "UI/UIBag", Cache = true});
 		this.uiElements.Add(typeof(UIShop),new UIElement(){Resources = "UI/UIShop", Cache = false});
 		this.uiElements.Add(typeof(UIEquip),new UIElement(){Resources = "UI/UIEquip", Cache = false});
 		this.uiElements.Add(typeof(UIQuestSystem),new UIElement(){Resources = "UI/UIQuestSystem", Cache = false});
 		this.uiElements.Add(typeof(UIQuestDialog),new UIElement(){Resources = "UI/UIQuestDialog", Cache = false});
 		this.uiElements.Add(typeof(UIFriend),new UIElement(){Resources = "UI/UIFriend", Cache = false});
+		this.uiElements.Add(typeof(UIGuildSelect),new UIElement(){Resources = "UI/Guild/UIGuildSelect", Cache = false});
+		this.uiElements.Add(typeof(UIGuildCreate),new UIElement(){Resources = "UI/Guild/UIGuildCreate", Cache = false});
+		this.uiElements.Add(typeof(UIGuildJoin),new UIElement(){Resources = "UI/Guild/UIGuildJoin", Cache = false});
+		this.uiElements.Add(typeof(UIGuildMain),new UIElement(){Resources = "UI/Guild/UIGuildMain", Cache = false});
 		
 	}
 

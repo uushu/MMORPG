@@ -177,11 +177,12 @@ namespace GameServer.Services
             sender.Session.Response.gameEnter.Errormsg = "None";
 
             //进入成功，发送初始角色信息
-            sender.Session.Response.gameEnter.Character = character.Info;
-            sender.SendResponse();
 
             sender.Session.Character = character;
             sender.Session.PostResponser = character;
+
+            sender.Session.Response.gameEnter.Character = character.Info;
+            sender.SendResponse();
             MapManager.Instance[dbchar.MapID].CharacterEnter(sender, character);
         }
 
@@ -202,10 +203,11 @@ namespace GameServer.Services
         public void CharacterLeave(Character character)
         {
             Log.InfoFormat("CharacterLeave: characterID:{0} name:{1} ", character.Id, character.Info.Name);
+            TeamService.Instance.LeaveTeam(character);
             CharacterManager.Instance.RemoveCharacter(character.Id);
             FriendService.Instance.RemovePendingRequests(character.Id);
-            MapManager.Instance[character.Info.mapId].CharacterLeave(character);
             character.Clear();
+            MapManager.Instance[character.Info.mapId].CharacterLeave(character);
         }
 
       

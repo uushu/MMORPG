@@ -30,6 +30,7 @@
 
 
 using System;
+using System.Data;
 using System.Runtime.InteropServices;
 class Time
 {
@@ -139,5 +140,26 @@ class Time
         _time = (_ticks - startupTicks) / 10000000f;
         lastTick = _ticks;
     }
+    public static double timestamp 
+    { 
+        get
+        {
+            return GetTimestamp(DateTime.Now);
 
+        } 
+    }
+    public static DateTime GetTime(long timestamp)
+    {
+        DateTime dateTimeStart = TimeZone.CurrentTimeZone.ToLocalTime(new DateTime(1970, 1, 1));
+        long lTime = timestamp * 10000000;
+        TimeSpan toNow = new TimeSpan(lTime);
+        return dateTimeStart.Add(toNow);
+    }
+    private static double GetTimestamp(DateTime time)
+    {
+        System.DateTime startTime = TimeZone.CurrentTimeZone.ToLocalTime(new System.DateTime(1970, 1, 1));
+        return (time-startTime).TotalSeconds;
+    }
+
+    
 }

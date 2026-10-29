@@ -41,6 +41,8 @@ public class LoadingManager : MonoBehaviour {
 		ShopManager.Instance.Init();
 		StatusService.Instance.Init();
 		FriendService.Instance.Init();
+		TeamService.Instance.Init();
+		GuildService.Instance.Init();
 
 		for (float i = 50; i < 100;)
 		{

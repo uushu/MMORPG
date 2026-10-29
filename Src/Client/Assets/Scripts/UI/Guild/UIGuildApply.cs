@@ -1,12 +1,9 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
 
-public class UITest : UIWindow
-{
+public class UIGuildApply : MonoBehaviour {
 
-	public Text title;
 	// Use this for initialization
 	void Start () {
 		

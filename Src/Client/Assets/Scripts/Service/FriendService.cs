@@ -12,7 +12,7 @@ namespace Service
     public class FriendService :Singleton<FriendService>,IDisposable
     {
 
-        public UnityAction OnFriendUpdate;
+        public event Action OnFriendUpdate;
 
         public void Init()
         {

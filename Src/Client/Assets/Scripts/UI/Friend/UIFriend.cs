@@ -16,23 +16,21 @@ public class UIFriend : UIWindow {
 
 	void Start()
 	{
-		FriendService.Instance.OnFriendUpdate = RefreshUI;
+		FriendService.Instance.OnFriendUpdate += RefreshUI;
 		this.list.onItemSelected += this.OnFriendSelected;
 		RefreshUI();
 	}
 
 	private void OnDestroy()
 	{
-		list.onItemSelected -= this.OnFriendSelected;
 		FriendService.Instance.OnFriendUpdate -= RefreshUI;
+		list.onItemSelected -= this.OnFriendSelected;
 	}
 
 	private void OnFriendSelected(ListView.ListViewItem item)
 	{
 		this.SelectItem = item as UIFriendItem;
 	}
-
-
 	
 	public void OnClickFriendAdd()
 	{
@@ -98,6 +96,29 @@ public class UIFriend : UIWindow {
 			item.SetFriendInfo(friend);
 			this.list.AddItem(item);
 		}
+	}
+	
+	
+	public void OnClickTeamInvite()
+	{
+		if (SelectItem == null)
+		{
+			MessageBox.Show("请选择要组队的好友");
+			return;
+		}
+
+		if (SelectItem.Info.Status == 0)
+		{
+			MessageBox.Show("请选择在线的好友");
+			return;
+		}
+
+		MessageBox.Show(string.Format("确定要邀请好友{0}吗？", SelectItem.Info.friendInfo.Name), "邀请好友组队", MessageBoxType.Confirm,
+				"确定", "取消").OnYes =
+			() =>
+			{
+				TeamService.Instance.SendTeamInviteRequest(SelectItem.Info.friendInfo.Id, SelectItem.Info.friendInfo.Name);
+			};
 	}
 	
 }

@@ -3,7 +3,7 @@ using Common.Data;
 using Common.Utils;
 using GameServer.Core;
 using GameServer.Managers;
-
+using GameServer.Models;
 using Network;
 using SkillBridge.Message;
 using System;
@@ -28,10 +28,11 @@ namespace GameServer.Entities
         public QuestManager QuestManager;
         public FriendManager FriendManager;
 
-        //public Team Team;
-        //public double TeamUpdateTS;
+        public Team Team;
+        public double TeamUpdateTS; //队伍信息更新时间戳
 
-        //public Guild Guild;
+        public Guild Guild;
+        public double GuildUpdateTS;
 
         //public Chat Chat;
 
@@ -68,6 +69,7 @@ namespace GameServer.Entities
 
             this.FriendManager = new FriendManager(this);
             this.FriendManager.GetFriendInfos(this.Info.Friends);
+            this.Guild = GuildManager.Instance.GetGuild(this.Data.GuildID);
         }
 
         public long Gold
@@ -91,8 +93,39 @@ namespace GameServer.Entities
         /// <param name="message"></param>
         public void PostProcess(NetMessageResponse message)
         {
+            Log.InfoFormat("PostProcess: Character: characterID{0}:{1}", this.Id, this.Info.Name);
             this.FriendManager.PostProgress(message);
-            if(this.StatusManager.HasStatus)
+            lock(TeamManager.Instance.SyncRoot)
+            {
+                if (this.Team != null)
+                {
+                    Log.InfoFormat("PostProcess: Character: characterID{0}:{1} {2}<{3}", this.Id, this.Info.Name, TeamUpdateTS, Team.timestamp);
+                    if (TeamUpdateTS < this.Team.timestamp)
+                    {
+                        TeamUpdateTS = this.Team.timestamp;
+                        this.Team.PostProcess(message);
+                    }
+                }
+
+            }
+            if(this.Guild != null)
+            {
+                Log.InfoFormat("PostProcess > Guild: CharacterID:{0}:{1},{2}<{3}", this.Id, this.Info.Name, this.GuildUpdateTS ,this.Guild.timestamp);
+                if(this.Info.Guild ==null)
+                {
+                    this.Info.Guild = this.Guild.GetGuildInfo(this);
+                    if(message.mapCharacterEnter != null)
+                    {
+                        GuildUpdateTS = Guild.timestamp;
+                    }
+                }
+                if(GuildUpdateTS < this.Guild.timestamp & message.mapCharacterEnter == null)
+                {
+                    GuildUpdateTS = this.Guild.timestamp;
+                    this.Guild.PostProcess(this, message);
+                }
+            }
+            if (this.StatusManager.HasStatus)
             {
                 this.StatusManager.PostProgress(message);
             }
@@ -103,8 +136,19 @@ namespace GameServer.Entities
         /// </summary>
         internal void Clear()
         {
-            // 把自己的信息更新到好友管理器中
-            this.FriendManager.UpdateFriendInfo(this.Info, 0);
+            this.FriendManager.OffLineNotify();
+        }
+
+       
+        internal NCharacterInfo GetBasicInfo()
+        {
+            return new NCharacterInfo
+            {
+                Id = this.Id,
+                Name = this.Info.Name,
+                Class = this.Info.Class,
+                Level = this.Info.Level,
+            };
         }
     }
 }

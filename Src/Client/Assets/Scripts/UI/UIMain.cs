@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using Manager;
 using Models;
 using Service;
 using UI;
@@ -10,6 +11,8 @@ public class UIMain : MonoSingleton<UIMain>
 {
 	public Text name;
 	public Text level;
+
+	public UITeam TeamWindow;
 
 	protected override void OnStart()
 	{
@@ -33,13 +36,7 @@ public class UIMain : MonoSingleton<UIMain>
 		SceneManager.Instance.LoadScene("CharacterSelect");
 		UserService.Instance.SendGameLeave();
 	}
-	public void OnClickUITest()
-	{
-		
-		UITest ui=UIManager.Instance.Show<UITest>();
-		ui.title.text = "测试弹窗";
-		
-	}
+	
 	public void OnClickUIBag()
 	{
 		 UIManager.Instance.Show<UIBag>();
@@ -58,5 +55,32 @@ public class UIMain : MonoSingleton<UIMain>
 	public void OnClickUIFriend()
 	{
 		UIManager.Instance.Show<UIFriend>();
+	}
+	
+	public void OnClickUIGuild()
+	{
+		GuildManager.Instance.ShowGuild();
+	}
+	
+	public void OnClickUIRide()
+	{
+		
+	}
+	
+	public void OnClickUISetting()
+	{
+		
+	}
+	
+	
+	public void OnClickUISkill()
+	{
+		
+	}
+
+	
+	public void ShowTeamUI(bool show)
+	{
+		TeamWindow.ShowTeam(show);
 	}
 }

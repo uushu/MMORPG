@@ -252,6 +252,7 @@ namespace Service
                     EquipManager.Instance.Init(response.Character.Equips);
                     QuestManager.Instance.Init(response.Character.Quests);
                     FriendManager.Instance.Init(response.Character.Friends);
+                    GuildManager.Instance.Init(response.Character.Guild);
                 }
             }
         }
@@ -266,10 +267,11 @@ namespace Service
         
         void OnGameLeave(object sender, UserGameLeaveResponse response)
         {
+            Debug.LogFormat("OnGameLeave:{0} [{1}]", response.Result, response.Errormsg);
             MapService.Instance.CurrentMapId = 0;
             User.Instance.CurrentCharacter = null;
+            TeamManager.Instance.UpdateTeamInfo(null);
 
-            Debug.LogFormat("OnGameLeave:{0} [{1}]", response.Result, response.Errormsg);
         }
         
         
