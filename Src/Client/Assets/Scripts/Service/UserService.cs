@@ -16,6 +16,7 @@ namespace Service
         public UnityAction<Result, string> OnLogin;
         public UnityAction<Result, string> OnRegister;
         public UnityAction<Result, string> OnCharacterCreate;
+        public UnityAction OnCharacterEnter;
         
 
         private NetMessage pendingMessage = null;
@@ -253,6 +254,11 @@ namespace Service
                     QuestManager.Instance.Init(response.Character.Quests);
                     FriendManager.Instance.Init(response.Character.Friends);
                     GuildManager.Instance.Init(response.Character.Guild);
+                    
+                    if(this.OnCharacterEnter != null)
+                    {
+                        this.OnCharacterEnter();
+                    }
                 }
             }
         }

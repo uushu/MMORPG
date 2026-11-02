@@ -2,7 +2,7 @@
 -- --------------------------------------------------
 -- Entity Designer DDL Script for SQL Server 2005, 2008, 2012 and Azure
 -- --------------------------------------------------
--- Date Created: 10/29/2026 02:29:47
+-- Date Created: 11/01/2026 23:41:29
 -- Generated from EDMX file: D:\MMORPG_Course\mymmorpg\Src\Server\GameServer\GameServer\Entities.edmx
 -- --------------------------------------------------
 
@@ -39,7 +39,7 @@ IF OBJECT_ID(N'[dbo].[FK_TGuildTGuildMember]', 'F') IS NOT NULL
     ALTER TABLE [dbo].[GuildMembers] DROP CONSTRAINT [FK_TGuildTGuildMember];
 GO
 IF OBJECT_ID(N'[dbo].[FK_GuildGuildApply]', 'F') IS NOT NULL
-    ALTER TABLE [dbo].[TGuildApplies] DROP CONSTRAINT [FK_GuildGuildApply];
+    ALTER TABLE [dbo].[GuildApplies] DROP CONSTRAINT [FK_GuildGuildApply];
 GO
 
 -- --------------------------------------------------
@@ -73,8 +73,8 @@ GO
 IF OBJECT_ID(N'[dbo].[GuildMembers]', 'U') IS NOT NULL
     DROP TABLE [dbo].[GuildMembers];
 GO
-IF OBJECT_ID(N'[dbo].[TGuildApplies]', 'U') IS NOT NULL
-    DROP TABLE [dbo].[TGuildApplies];
+IF OBJECT_ID(N'[dbo].[GuildApplies]', 'U') IS NOT NULL
+    DROP TABLE [dbo].[GuildApplies];
 GO
 
 -- --------------------------------------------------
@@ -182,8 +182,8 @@ CREATE TABLE [dbo].[GuildMembers] (
 );
 GO
 
--- Creating table 'TGuildApplies'
-CREATE TABLE [dbo].[TGuildApplies] (
+-- Creating table 'GuildApplies'
+CREATE TABLE [dbo].[GuildApplies] (
     [Id] int IDENTITY(1,1) NOT NULL,
     [CharacterID] int  NOT NULL,
     [Name] nvarchar(max)  NOT NULL,
@@ -253,9 +253,9 @@ ADD CONSTRAINT [PK_GuildMembers]
     PRIMARY KEY CLUSTERED ([Id] ASC);
 GO
 
--- Creating primary key on [Id] in table 'TGuildApplies'
-ALTER TABLE [dbo].[TGuildApplies]
-ADD CONSTRAINT [PK_TGuildApplies]
+-- Creating primary key on [Id] in table 'GuildApplies'
+ALTER TABLE [dbo].[GuildApplies]
+ADD CONSTRAINT [PK_GuildApplies]
     PRIMARY KEY CLUSTERED ([Id] ASC);
 GO
 
@@ -368,8 +368,8 @@ ON [dbo].[GuildMembers]
     ([TGuildId]);
 GO
 
--- Creating foreign key on [TGuildId] in table 'TGuildApplies'
-ALTER TABLE [dbo].[TGuildApplies]
+-- Creating foreign key on [TGuildId] in table 'GuildApplies'
+ALTER TABLE [dbo].[GuildApplies]
 ADD CONSTRAINT [FK_GuildGuildApply]
     FOREIGN KEY ([TGuildId])
     REFERENCES [dbo].[Guilds]
@@ -379,7 +379,7 @@ GO
 
 -- Creating non-clustered index for FOREIGN KEY 'FK_GuildGuildApply'
 CREATE INDEX [IX_FK_GuildGuildApply]
-ON [dbo].[TGuildApplies]
+ON [dbo].[GuildApplies]
     ([TGuildId]);
 GO
 

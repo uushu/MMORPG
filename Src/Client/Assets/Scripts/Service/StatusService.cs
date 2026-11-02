@@ -5,11 +5,13 @@ using Models;
 using Network;
 using SkillBridge.Message;
 using UnityEngine;
+using UnityEngine.Events;
 
 namespace Manager
 {
     public class StatusService : Singleton<StatusService> ,IDisposable
     {
+        public UnityAction<long> GoldChanged;
         public delegate bool StatusNotifyHandler(NStatus status);
         Dictionary<StatusType,StatusNotifyHandler> events = new Dictionary<StatusType, StatusNotifyHandler>();
         HashSet<StatusNotifyHandler> handler = new HashSet<StatusNotifyHandler>();
@@ -62,6 +64,7 @@ namespace Manager
                 {
                     User.Instance.AddGold(-status.Value);
                 }
+                this.GoldChanged?.Invoke(User.Instance.CurrentCharacter.Gold);
             }
 
             StatusNotifyHandler handler;

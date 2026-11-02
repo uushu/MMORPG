@@ -189,10 +189,12 @@ namespace GameServer.Services
         void OnGameLeave(NetConnection<NetSession> sender, UserGameLeaveRequest request)
         {
             Character character = sender.Session.Character;
+            if (character == null) return;
             Log.InfoFormat("UserGameLeaveRequest: characterID:{0}:{1} Map:{2}", character.Id, character.Info.Name, character.Info.mapId);
+            sender.Session.Character = null;
+            sender.Session.PostResponser = null;
             CharacterLeave(character);
-            
-            SessionManager.Instance.RemoveSession(character.Id );
+          
             sender.Session.Response.gameLeave = new UserGameLeaveResponse();
             sender.Session.Response.gameLeave.Result = Result.Success;
             sender.Session.Response.gameLeave.Errormsg = "None";
@@ -203,6 +205,10 @@ namespace GameServer.Services
         public void CharacterLeave(Character character)
         {
             Log.InfoFormat("CharacterLeave: characterID:{0} name:{1} ", character.Id, character.Info.Name);
+
+            // 从在线会话中移除角色
+            SessionManager.Instance.RemoveSession(character.Id);
+
             TeamService.Instance.LeaveTeam(character);
             CharacterManager.Instance.RemoveCharacter(character.Id);
             FriendService.Instance.RemovePendingRequests(character.Id);

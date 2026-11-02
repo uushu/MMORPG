@@ -54,7 +54,9 @@ namespace GameServer.Managers
             guild.AddMember(character.Id, character.Name,character.Data.Level, character.Data.Class, GuildTitle.President);
             character.Guild = guild;
             DBService.Instance.Save();
+
             character.Data.GuildID = dbGuild.Id;
+            character.Gold -= 50000;
             DBService.Instance.Save();
             this.AddGuild(guild);
         }
@@ -78,6 +80,12 @@ namespace GameServer.Managers
                 result.Add(guild.Value.GetGuildInfo(null));
             }    
             return result;
+        }
+
+        public void RemoveGuild(Guild guild)
+        {
+            this.Guilds.Remove(guild.Id);
+            this.GuildNames.Remove(guild.Name);
         }
     }
 }

@@ -32,12 +32,12 @@ public class UIShop : UIWindow
 
     private void OnEnable()
     {
-        User.Instance.GoldChanged += SetMoney;
+        StatusService.Instance.GoldChanged += SetMoney;
     }
 
     private void OnDisable()
     {
-        User.Instance.GoldChanged -= SetMoney;
+        StatusService.Instance.GoldChanged -= SetMoney;
     }
 
     void Start()

@@ -19,7 +19,7 @@ namespace Network
         public IPostResponser PostResponser { get; set; }   // 响应后处理器
 
         public void Disconnected()
-        {
+        { 
             this.PostResponser = null;
             if (this.Character != null)
                 UserService.Instance.CharacterLeave(this.Character);

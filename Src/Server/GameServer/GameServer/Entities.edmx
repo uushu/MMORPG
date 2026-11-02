@@ -15,7 +15,7 @@
     <EntitySet Name="CharacterFriends" EntityType="ExtremeWorldModel.Store.CharacterFriends" store:Type="Tables" Schema="dbo" />
     <EntitySet Name="Guilds" EntityType="ExtremeWorldModel.Store.Guilds" store:Type="Tables" Schema="dbo" />
     <EntitySet Name="GuildMembers" EntityType="ExtremeWorldModel.Store.GuildMembers" store:Type="Tables" Schema="dbo" />
-    <EntitySet Name="TGuildApplies" EntityType="ExtremeWorldModel.Store.TGuildApplies" store:Type="Tables" Schema="dbo" />
+    <EntitySet Name="GuildApplies" EntityType="ExtremeWorldModel.Store.GuildApplies" store:Type="Tables" Schema="dbo" />
     <AssociationSet Name="UserPlayer" Association="ExtremeWorldModel.Store.UserPlayer">
       <End Role="User" EntitySet="Users" />
       <End Role="Player" EntitySet="Players" />
@@ -46,7 +46,7 @@
     </AssociationSet>
     <AssociationSet Name="GuildGuildApply" Association="ExtremeWorldModel.Store.GuildGuildApply">
       <End Role="TGuild" EntitySet="Guilds" />
-      <End Role="TGuildApply" EntitySet="TGuildApplies" />
+      <End Role="TGuildApply" EntitySet="GuildApplies" />
     </AssociationSet>
   </EntityContainer>
   <EntityType Name="Users">
@@ -150,7 +150,7 @@
     <Property Name="LastTime" Type="datetime" Nullable="false" />
     <Property Name="TGuildId" Type="int" Nullable="false" />
   </EntityType>
-  <EntityType Name="TGuildApplies">
+  <EntityType Name="GuildApplies">
     <Key>
       <PropertyRef Name="Id" />
     </Key>
@@ -249,7 +249,7 @@
   </Association>
   <Association Name="GuildGuildApply">
     <End Role="TGuild" Type="ExtremeWorldModel.Store.Guilds" Multiplicity="1" />
-    <End Role="TGuildApply" Type="ExtremeWorldModel.Store.TGuildApplies" Multiplicity="*" />
+    <End Role="TGuildApply" Type="ExtremeWorldModel.Store.GuildApplies" Multiplicity="*" />
     <ReferentialConstraint>
       <Principal Role="TGuild">
         <PropertyRef Name="Id" />
@@ -311,10 +311,10 @@
             <End Role="TGuild" EntitySet="Guilds" />
             <End Role="TGuildMember" EntitySet="GuildMembers" />
           </AssociationSet>
-          <EntitySet Name="TGuildApplies" EntityType="ExtremeWorldModel.TGuildApply" />
+          <EntitySet Name="GuildApplies" EntityType="ExtremeWorldModel.TGuildApply" />
           <AssociationSet Name="GuildGuildApply" Association="ExtremeWorldModel.GuildGuildApply">
             <End Role="TGuild" EntitySet="Guilds" />
-            <End Role="TGuildApply" EntitySet="TGuildApplies" />
+            <End Role="TGuildApply" EntitySet="GuildApplies" />
           </AssociationSet>
         </EntityContainer>
         <EntityType Name="TPlayer">
@@ -618,9 +618,9 @@
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>
-    <EntitySetMapping Name="TGuildApplies">
+    <EntitySetMapping Name="GuildApplies">
       <EntityTypeMapping TypeName="IsTypeOf(ExtremeWorldModel.TGuildApply)">
-        <MappingFragment StoreEntitySet="TGuildApplies">
+        <MappingFragment StoreEntitySet="GuildApplies">
           <ScalarProperty Name="Id" ColumnName="Id" />
           <ScalarProperty Name="CharacterID" ColumnName="CharacterID" />
           <ScalarProperty Name="Name" ColumnName="Name" />

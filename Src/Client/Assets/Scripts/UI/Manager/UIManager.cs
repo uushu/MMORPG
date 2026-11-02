@@ -28,6 +28,7 @@ public class UIManager : Singleton<UIManager>
 		this.uiElements.Add(typeof(UIGuildCreate),new UIElement(){Resources = "UI/Guild/UIGuildCreate", Cache = false});
 		this.uiElements.Add(typeof(UIGuildJoin),new UIElement(){Resources = "UI/Guild/UIGuildJoin", Cache = false});
 		this.uiElements.Add(typeof(UIGuildMain),new UIElement(){Resources = "UI/Guild/UIGuildMain", Cache = false});
+		this.uiElements.Add(typeof(UIGuildApply),new UIElement(){Resources = "UI/Guild/UIGuildApply", Cache = false});
 		
 	}
 

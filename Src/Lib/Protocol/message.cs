@@ -318,7 +318,7 @@ namespace SkillBridge.Message
         public GuildLeaveRequest guildLeave { get; set; }
 
         [global::ProtoBuf.ProtoMember(29)]
-        public GuildAdminRequest guildAdmain { get; set; }
+        public GuildAdminRequest guildAdmin { get; set; }
 
     }
 
@@ -411,7 +411,7 @@ namespace SkillBridge.Message
         public GuildLeaveResponse guildLeave { get; set; }
 
         [global::ProtoBuf.ProtoMember(29)]
-        public GuildAdminResponse guildAdmain { get; set; }
+        public GuildAdminResponse guildAdmin { get; set; }
 
         [global::ProtoBuf.ProtoMember(100)]
         public StatusNotify statusNotify { get; set; }
@@ -1393,6 +1393,10 @@ namespace SkillBridge.Message
         [global::ProtoBuf.ProtoMember(2)]
         public int targetId { get; set; }
 
+        [global::ProtoBuf.ProtoMember(3, Name = @"introduce")]
+        [global::System.ComponentModel.DefaultValue("")]
+        public string Introduce { get; set; } = "";
+
     }
 
     [global::ProtoBuf.ProtoContract()]
@@ -1580,10 +1584,12 @@ namespace SkillBridge.Message
         Kickout = 1,
         [global::ProtoBuf.ProtoEnum(Name = @"PROMOTE")]
         Promote = 2,
-        [global::ProtoBuf.ProtoEnum(Name = @"DEPOSTE")]
-        Deposte = 3,
+        [global::ProtoBuf.ProtoEnum(Name = @"DEPOSE")]
+        Depose = 3,
         [global::ProtoBuf.ProtoEnum(Name = @"TREANSFER")]
         Treansfer = 4,
+        [global::ProtoBuf.ProtoEnum(Name = @"SET_INTRODUCE")]
+        SetIntroduce = 5,
     }
 
 }

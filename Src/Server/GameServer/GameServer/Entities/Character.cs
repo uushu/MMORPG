@@ -94,7 +94,10 @@ namespace GameServer.Entities
         public void PostProcess(NetMessageResponse message)
         {
             Log.InfoFormat("PostProcess: Character: characterID{0}:{1}", this.Id, this.Info.Name);
+            
+            // 好友状态信息更新
             this.FriendManager.PostProgress(message);
+            // 组队状态信息更新
             lock(TeamManager.Instance.SyncRoot)
             {
                 if (this.Team != null)
@@ -108,7 +111,9 @@ namespace GameServer.Entities
                 }
 
             }
-            if(this.Guild != null)
+
+            // 公会状态信息更新
+            if (this.Guild != null)
             {
                 Log.InfoFormat("PostProcess > Guild: CharacterID:{0}:{1},{2}<{3}", this.Id, this.Info.Name, this.GuildUpdateTS ,this.Guild.timestamp);
                 if(this.Info.Guild ==null)
@@ -125,6 +130,8 @@ namespace GameServer.Entities
                     this.Guild.PostProcess(this, message);
                 }
             }
+
+            // 各种状态信息更新
             if (this.StatusManager.HasStatus)
             {
                 this.StatusManager.PostProgress(message);

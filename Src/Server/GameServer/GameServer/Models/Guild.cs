@@ -1,4 +1,5 @@
-﻿using Common.Utils;
+﻿using Common;
+using Common.Utils;
 using GameServer.Entities;
 using GameServer.Managers;
 using GameServer.Services;
@@ -15,9 +16,8 @@ namespace GameServer.Models
     internal class Guild 
     {
         public int Id { get { return this.Data.Id; } }
-        public Character Leader;
+    
         public string Name { get { return this.Data.Name; } }
-        public List<Character> Members = new List<Character>();
         public double timestamp;
         public TGuild Data;
 
@@ -44,9 +44,11 @@ namespace GameServer.Models
             if(character != null)
             {
                 info.Members.AddRange(GetMemberInfos());
-                if(character.Id == this.Data.LeaderID)
+                var member = this.GetDBMember(character.Id);
+                if(member !=null && (member.Title==(int)GuildTitle.President || member.Title==(int)GuildTitle.VicePresident))
+                {
                     info.Applies.AddRange(GetApplyInfos());
-            
+                }
             }
             return info;
         }
@@ -57,6 +59,7 @@ namespace GameServer.Models
 
             foreach(var apply in this.Data.Applies)
             {
+                if (apply.Result != (int)GuildApplyResult.None) continue;
                 applies.Add(new NGuildApplyInfo()
                 {
                     characterId = apply.CharacterID,
@@ -95,16 +98,14 @@ namespace GameServer.Models
                     member.Level = character.Data.Level;
                     member.Class = character.Data.Class;
                     member.LastTime = DateTime.Now;
-                    if (member.CharacterID == this.Data.LeaderID)
-                        this.Leader = character;
+                    
                 }
                 else
                 {
                     memberInfo.Info = this.GetMemberInfo(member);
                     memberInfo.Status = 0;
 
-                    if (member.CharacterID == this.Data.LeaderID)
-                        this.Leader = null;
+                    
                 }
                 members.Add(memberInfo);
 
@@ -136,13 +137,13 @@ namespace GameServer.Models
 
         internal bool JoinApply(NGuildApplyInfo apply)
         {
-            var oldApply = this.Data.Applies.FirstOrDefault(v=>v.CharacterID == apply.characterId);
+            var oldApply = this.Data.Applies.FirstOrDefault(v=>v.CharacterID == apply.characterId && v.Result == (int)GuildApplyResult.None);
             if(oldApply != null)
             {
                 return false;
             }
 
-            var dbApply = DBService.Instance.Entities.TGuildApplies.Create();
+            var dbApply = DBService.Instance.Entities.GuildApplies.Create();
             dbApply.TGuildId = apply.GuildId;
             dbApply.CharacterID = apply.characterId;
             dbApply.Class = apply.Class;
@@ -150,7 +151,7 @@ namespace GameServer.Models
             dbApply.Level = apply.Level;
             dbApply.ApplyTime = DateTime.Now;
 
-            DBService.Instance.Entities.TGuildApplies.Add(dbApply);
+            DBService.Instance.Entities.GuildApplies.Add(dbApply);
             this.Data.Applies.Add(dbApply);
 
             DBService.Instance.Save();
@@ -170,8 +171,7 @@ namespace GameServer.Models
             oldApply.Result = (int) apply.Result;
             if(apply.Result == GuildApplyResult.Accept)
             {
-                this.AddMember(apply.characterId, apply.Name, apply.Level, apply.Class, GuildTitle.None);
-
+                this.AddMember(oldApply.CharacterID, oldApply.Name, oldApply.Level, oldApply.Class, GuildTitle.None);
             }
             DBService.Instance.Save();
             this.timestamp = TimeUtil.timestamp;
@@ -203,17 +203,126 @@ namespace GameServer.Models
             else
             {
                 var dbCharacter = DBService.Instance.Entities.Characters.SingleOrDefault(c => c.ID == characterId);
-                if(dbCharacter != null)
-                {
-                    dbCharacter.GuildID = this.Id;
-                }
+                dbCharacter.GuildID = this.Id;
             }
                 timestamp = TimeUtil.timestamp;
         }
 
         internal void Leave(Character character)
         {
-           
+            Log.InfoFormat("OnGuildLeave: {0}{1}", character.Id, character.Name);
+            var member = Data.Members.FirstOrDefault(v => v.CharacterID == character.Id);
+            
+            // 会长离开：解散公会
+            if(character.Id == Data.LeaderID)
+            {
+                foreach(var m in Data.Members.ToList())
+                {
+                    var cha = CharacterManager.Instance.GetCharacter(m.CharacterID);
+                    // 在线成员
+                    if(cha != null)
+                    {
+                        cha.Data.GuildID = 0;
+                        cha.Guild = null;
+                        cha.Info.Guild = null;
+                    }
+                    // 离线修改数据库
+                    else
+                    {
+                        var dbMember = DBService.Instance.Entities.Characters.SingleOrDefault(v => v.ID == m.CharacterID);
+                        dbMember.GuildID = 0;
+                    }
+                    DBService.Instance.Entities.GuildMembers.Remove(m);
+                    this.Data.Members.Remove(m);
+                }
+                foreach(var apply in Data.Applies.ToList())
+                {
+                    DBService.Instance.Entities.GuildApplies.Remove(apply);
+                    this.Data.Applies.Remove(apply);
+                }
+                DBService.Instance.Entities.Guilds.Remove(this.Data);
+                
+            }
+            // 普通成员离开公会
+            else
+            {
+                DBService.Instance.Entities.GuildMembers.Remove(member);
+                this.Data.Members.Remove(member);
+                character.Data.GuildID = 0;
+                character.Guild = null;
+                character.Info.Guild = null;
+            }
+            timestamp = TimeUtil.timestamp;
         }
+
+        
+
+        TGuildMember GetDBMember(int characterId)
+        {
+            foreach( var member in this.Data.Members)
+            {
+                if (member.CharacterID == characterId)
+                {
+                    return member;
+                }
+            }
+            return null;
+        }
+        internal bool ExecuteAdmin(GuildAdmainCommand command, int targetId, int characterId)
+        {
+            var target =GetDBMember(targetId);
+            var source = GetDBMember(characterId);
+         
+            
+            switch (command)
+            {
+                case GuildAdmainCommand.Promote:
+                    target.Title = (int)GuildTitle.VicePresident;
+                    break;
+                case GuildAdmainCommand.Depose:
+                    target.Title = (int)GuildTitle.None;
+                    break;
+                case GuildAdmainCommand.Treansfer:
+                    target.Title = (int)GuildTitle.President;
+                    source.Title = (int)GuildTitle.None;
+                    this.Data.LeaderID = targetId;
+                    this.Data.LeaderName = target.Name;
+                    break;
+                case GuildAdmainCommand.Kickout:
+                    if(source.Title == (int)GuildTitle.President && (target.Title == (int)GuildTitle.VicePresident || target.Title == (int)GuildTitle.None) || source.Title == (int)GuildTitle.VicePresident && target.Title == (int)GuildTitle.None)
+                    {
+                        var dbCharacter = DBService.Instance.Entities.Characters.SingleOrDefault(v => v.ID == targetId);
+                        DBService.Instance.Entities.GuildMembers.Remove(target);
+                        this.Data.Members.Remove(target);
+                        dbCharacter.GuildID = 0;
+                    }
+                    else 
+                        return false;
+                    break;
+            }
+            DBService.Instance.Save();
+            timestamp = TimeUtil.timestamp;
+            return true;
+        }
+
+        public bool SetIntroduce(int characterId,string introduce)
+        {
+            if(characterId != this.Data.LeaderID)
+            {
+                return false;
+            }
+            if(introduce.Length < 3 || introduce.Length > 50)
+            {
+                return false;
+            }
+
+            this.Data.Introduce = introduce;
+            DBService.Instance.Save();
+            timestamp = TimeUtil.timestamp;
+            return true;
+
+        }
+
+
     }
 }

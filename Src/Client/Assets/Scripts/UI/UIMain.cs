@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using Manager;
 using Models;
@@ -16,7 +17,13 @@ public class UIMain : MonoSingleton<UIMain>
 
 	protected override void OnStart()
 	{
+		UserService.Instance.OnCharacterEnter += UpdateInfo;
 		UpdateInfo();
+	}
+
+	private void OnDestroy()
+	{
+		UserService.Instance.OnCharacterEnter -= UpdateInfo;
 	}
 
 	void Update()

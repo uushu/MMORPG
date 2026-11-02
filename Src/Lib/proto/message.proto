@@ -212,7 +212,7 @@ message NetMessageRequest{
   GuildListRequest guildList = 26;
   GuildRequest guild = 27;
   GuildLeaveRequest guildLeave = 28;
-  GuildAdminRequest guildAdmain = 29;
+  GuildAdminRequest guildAdmin = 29;
   
 }
 
@@ -250,7 +250,7 @@ message NetMessageResponse{
     GuildListResponse guildList = 26;
     GuildResponse guild = 27;
     GuildLeaveResponse guildLeave = 28;
-    GuildAdminResponse guildAdmain = 29;
+    GuildAdminResponse guildAdmin = 29;
 
 
 
@@ -690,14 +690,16 @@ enum GUILD_ADMAIN_COMMAND
 {
   KICKOUT = 1; // 踢人
   PROMOTE = 2; // 晋升
-  DEPOSTE = 3; // 罢免
+  DEPOSE = 3; // 罢免
   TREANSFER = 4; // 转让
+  SET_INTRODUCE = 5; // 修改公会宗旨
 }
 
 message GuildAdminRequest
 {
   GUILD_ADMAIN_COMMAND command = 1;
   int32 targetId = 2;
+  string introduce = 3; // 修改公会宗旨时使用
 }
 
 message GuildAdminResponse

@@ -1,4 +1,5 @@
-﻿using SkillBridge.Message;
+﻿using Models;
+using SkillBridge.Message;
 
 namespace Manager
 {
@@ -6,6 +7,7 @@ namespace Manager
     {
         public int MaxMemberCount = 255;
         public NGuildInfo guildInfo;
+        public NGuildMemberInfo myMemberInfo;
 
         public bool HasGuild
         {
@@ -14,6 +16,20 @@ namespace Manager
         public void Init(NGuildInfo info)
         {
             this.guildInfo = info;
+            if (guildInfo == null)
+            {
+                myMemberInfo = null;
+                return;
+            }
+
+            foreach (var member in guildInfo.Members)
+            {
+                if (member.characterId == User.Instance.CurrentCharacter.Id)
+                {
+                    myMemberInfo = member;
+                    break;
+                }
+            }
         }
 
         public void ShowGuild()

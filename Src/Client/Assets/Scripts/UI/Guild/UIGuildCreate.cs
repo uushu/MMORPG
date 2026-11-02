@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using Models;
 using Service;
 using UI;
 using UnityEngine;
@@ -46,6 +47,12 @@ public class UIGuildCreate : UIWindow
 		if (inputIntroduce.text.Length < 3 || inputIntroduce.text.Length > 50)
 		{
 			MessageBox.Show("公会名称必须为3-50个字符", "错误", MessageBoxType.Error);
+			return;
+		}
+
+		if (User.Instance.CurrentCharacter.Gold < 50000)
+		{
+			MessageBox.Show("创建公会需要50000金币，您的金币不足", "错误", MessageBoxType.Error);
 			return;
 		}
 		GuildService.Instance.SendGuildCreate(inputName.text, inputIntroduce.text);

@@ -10,7 +10,6 @@ namespace Models
 {
     class User : Singleton<User>
     {
-        public event Action<long> GoldChanged;
         NUserInfo userInfo;
         public NUserInfo Info
         {
@@ -33,7 +32,6 @@ namespace Models
         public void AddGold(int goldChange)
         {
             this.CurrentCharacter.Gold += goldChange;
-            GoldChanged?.Invoke(this.CurrentCharacter.Gold);
         }
     }
     

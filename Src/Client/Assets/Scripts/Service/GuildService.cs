@@ -11,9 +11,9 @@ namespace Service
 {
     public class GuildService : Singleton<GuildService> ,IDisposable
     {
-        public UnityAction OnGuildUpdate;
+        public UnityAction OnGuildUpdate;  // 公会内部更新委托
         public UnityAction<bool> OnGuildCreateResult;
-        public UnityAction<List<NGuildInfo>> OnGuildListResult ;
+        public UnityAction<List<NGuildInfo>> OnGuildListResult ;  // 加入公会列表委托
         public void Init()
         {
             
@@ -27,9 +27,12 @@ namespace Service
             MessageDistributer.Instance.Subscribe<GuildListResponse>(this.OnGuildList);
             MessageDistributer.Instance.Subscribe<GuildResponse>(this.OnGuild);
             MessageDistributer.Instance.Subscribe<GuildLeaveResponse>(this.OnGuildLeave);
+            MessageDistributer.Instance.Subscribe<GuildAdminResponse>(this.OnGuildAdmin);
+            
         }
 
-        
+      
+
         public void Dispose()
         {
             MessageDistributer.Instance.Unsubscribe<GuildCreateResponse>(this.OnGuildCreate);
@@ -38,8 +41,11 @@ namespace Service
             MessageDistributer.Instance.Unsubscribe<GuildListResponse>(this.OnGuildList);
             MessageDistributer.Instance.Unsubscribe<GuildResponse>(this.OnGuild);
             MessageDistributer.Instance.Unsubscribe<GuildLeaveResponse>(this.OnGuildLeave);
+            MessageDistributer.Instance.Unsubscribe<GuildAdminResponse>(this.OnGuildAdmin);
+            
         }
-        
+
+       
         /// <summary>
         /// 发送公会创建请求
         /// </summary>
@@ -78,7 +84,7 @@ namespace Service
             }
             else
             {
-                MessageBox.Show(string.Format("{0}公会创建失败", message.guildInfo.Name),"公会创建");
+                MessageBox.Show(message.Errormsg, "公会创建", MessageBoxType.Error);
             }
         }
 
@@ -148,11 +154,11 @@ namespace Service
             Debug.LogFormat("OnGuildJoinRep:{0}", response.Result);
             if (response.Result == Result.Success)
             {
-                MessageBox.Show("加入公会成功", "公会");
+                MessageBox.Show(response.Errormsg, "公会");
             }
             else
             {
-                MessageBox.Show("加入公会失败", "公会");
+                MessageBox.Show(response.Errormsg, "公会", MessageBoxType.Error);
             }
         }
 
@@ -181,7 +187,7 @@ namespace Service
         
         private void OnGuild(object sender, GuildResponse message)
         {
-            Debug.LogFormat("OnGuildList:{0},{1},{2}", message.Result,message.guildInfo.Id,message.guildInfo.Name);
+            Debug.LogFormat("OnGuild:{0}", message.Result);
             GuildManager.Instance.Init(message.guildInfo);
             if (this.OnGuildUpdate != null)
             {
@@ -201,14 +207,67 @@ namespace Service
         {
             if (message.Result == Result.Success)
             {
-                GuildManager.Instance.Init(null);
-                MessageBox.Show("离开公会成功", "公会");
+                MessageBox.Show(message.Errormsg, "公会");
             }
             else 
-                MessageBox.Show("离开公会失败", "公会",MessageBoxType.Error);
+                MessageBox.Show(message.Errormsg, "公会",MessageBoxType.Error);
+        }
+
+        #region 公会管理协议
+
+        
+        /// <summary>
+        ///  发送加入公会的审批
+        /// </summary>
+        /// <param name="accept"></param>
+        /// <param name="apply"></param>
+        public void SendGuildJoinApply(bool accept, NGuildApplyInfo apply)
+        {
+            Debug.Log("SendGuildJoinApply");
+            NetMessage message = new NetMessage();
+            message.Request = new NetMessageRequest();
+            message.Request.guildJoinRep = new GuildJoinResponse();
+            message.Request.guildJoinRep.Result = Result.Success;
+            message.Request.guildJoinRep.Apply = apply;
+            message.Request.guildJoinRep.Apply.Result = accept ? GuildApplyResult.Accept : GuildApplyResult.Reject;
+            NetClient.Instance.SendMessage(message);
+        }
+
+        /// <summary>
+        /// 发送公会管理指令
+        /// </summary>
+        /// <param name="command"></param>
+        /// <param name="targetId"></param>
+        public void SendAdminCommand(GuildAdmainCommand command, int targetId ,string introduce = "")
+        {
+            Debug.Log("SendAdminCommandRequest");
+            NetMessage message = new NetMessage();
+            message.Request = new NetMessageRequest();
+            message.Request.guildAdmin = new GuildAdminRequest();
+            message.Request.guildAdmin.Command = command;
+            message.Request.guildAdmin.targetId = targetId;
+            message.Request.guildAdmin.Introduce = introduce;
+            NetClient.Instance.SendMessage(message);
+        }
+        
+        private void OnGuildAdmin(object sender, GuildAdminResponse message)
+        {
+            Debug.LogFormat("OnGuildAdmin:{0} {1}",message.Command,message.Result );
+
+            if(message.Result == Result.Success)
+            {
+                MessageBox.Show(message.Errormsg, "操作结果", MessageBoxType.Information);
+
+            }
+            else
+            {
+                MessageBox.Show(message.Errormsg, "操作结果", MessageBoxType.Error);
+            }
         }
 
 
+        #endregion
+        
         
     }
 }
