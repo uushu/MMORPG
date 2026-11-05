@@ -31,6 +31,7 @@ public class UIManager : Singleton<UIManager>
 		this.uiElements.Add(typeof(UIGuildApply),new UIElement(){Resources = "UI/Guild/UIGuildApply", Cache = false});
 		this.uiElements.Add(typeof(UIPopCharMenu),new UIElement(){Resources = "UI/UIPopCharMenu", Cache = true});
 		this.uiElements.Add(typeof(UIRide),new UIElement(){Resources = "UI/UIRide", Cache = false});
+		this.uiElements.Add(typeof(UISystemConfig),new UIElement(){Resources = "UI/UISystemConfig", Cache = false});
 		
 	}
 
@@ -49,6 +50,7 @@ public class UIManager : Singleton<UIManager>
 	public T Show<T>()
 	{
 		// UI弹出音效
+		SoundManager.Instance.PlaySound(SoundDefine.SFX_UI_Win_Open);
 		Type type = typeof(T);
 		if (this.uiElements.ContainsKey(type))
 		{

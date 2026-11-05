@@ -50,16 +50,13 @@ public class UIInputBox : MonoBehaviour {
 		this.btnNo.onClick.AddListener(OnClickNo);
 
 		
-		// if (type == MessageBoxType.Error)
-		//     SoundManager.Instance.PlaySound(SoundDefine.SFX_Message_Error);
-		// else
-		//     SoundManager.Instance.PlaySound(SoundDefine.SFX_Message_Info);
+		SoundManager.Instance.PlaySound(SoundDefine.SFX_Message_Info);
 	}
 
 
 	void OnClickYes()
 	{
-		//SoundManager.Instance.PlaySound(SoundDefine.SFX_UI_Confirm);
+		SoundManager.Instance.PlaySound(SoundDefine.SFX_UI_Confirm);
 		this.tips.text = "";
 		if (string.IsNullOrEmpty(this.input.text))
 		{
@@ -80,7 +77,7 @@ public class UIInputBox : MonoBehaviour {
 	}
 	void OnClickNo()
 	{
-		//SoundManager.Instance.PlaySound(SoundDefine.SFX_UI_Win_Close);
+		SoundManager.Instance.PlaySound(SoundDefine.SFX_UI_Win_Close);
 		Destroy(this.gameObject);
 		if (this.OnCancel != null)
 			this.OnCancel();

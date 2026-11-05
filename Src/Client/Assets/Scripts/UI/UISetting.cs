@@ -7,14 +7,20 @@ public class UISetting : UIWindow {
 
 	public void OnClickCharSelect()
 	{
-		var pop = UIManager.Instance.Show<UIPopCharMenu>();
-		// SceneManager.Instance.LoadScene("CharacterSelect");
-		// UserService.Instance.SendGameLeave();
+		
+		SceneManager.Instance.LoadScene("CharacterSelect");
+		SoundManager.Instance.PlayMusic(SoundDefine.Music_Select);
+		UserService.Instance.SendGameLeave();
 	}
 
 	public void OnClickQuitGame()
 	{
 		UserService.Instance.SendGameLeave(true);
+	}
+	public void OnClickMusicSetting()
+	{
+		UIManager.Instance.Show<UISystemConfig>();
+		this.Close();
 	}
 
 }
