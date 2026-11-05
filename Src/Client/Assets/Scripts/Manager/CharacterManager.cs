@@ -58,4 +58,11 @@ public class CharacterManager : Singleton<CharacterManager> , IDisposable
 		}
 	}
 
+	public Character GetCharacter(int id)
+	{
+		Character character;
+		this.Characters.TryGetValue(id, out character);
+		return character;
+	}
+
 }

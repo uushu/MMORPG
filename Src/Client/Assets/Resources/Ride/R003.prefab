@@ -470,7 +470,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4551041778805652}
   - component: {fileID: 95303617758323400}
-  - component: {fileID: 114452815398325786}
+  - component: {fileID: 114984215788479216}
   m_Layer: 0
   m_Name: R003
   m_TagString: Untagged
@@ -1036,7 +1036,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1653115206226750}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 36.85801, y: 7.9992723, z: 26.371336}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4874715447665386}
@@ -1396,7 +1396,7 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorControllerStateOnDisable: 0
---- !u!114 &114452815398325786
+--- !u!114 &114984215788479216
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1404,12 +1404,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 1653115206226750}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e532681fae77125408e80f955e171353, type: 3}
+  m_Script: {fileID: 11500000, guid: e12132e0d0d943199fe989203115b7e1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  mountPoint: {fileID: 4239877308199392}
+  ridePoint: {fileID: 4611289318816938}
   rider: {fileID: 0}
-  offset: {x: 0.2, y: -0.4, z: 0}
+  offset: {x: 0, y: -0.4, z: 0}
 --- !u!137 &137474833371973978
 SkinnedMeshRenderer:
   m_ObjectHideFlags: 1

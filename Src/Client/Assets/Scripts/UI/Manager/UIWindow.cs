@@ -7,6 +7,7 @@ public class UIWindow : MonoBehaviour {
 	public delegate void CloseHandler(UIWindow sender,WindowResult result);
 
 	public event CloseHandler OnClose;
+	public GameObject Root;
 	public virtual System.Type Type
 	{
 		get

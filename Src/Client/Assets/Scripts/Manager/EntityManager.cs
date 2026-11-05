@@ -8,7 +8,7 @@ namespace Manager
     {
         void OnEntityRemoved();
         void OnEntityChanged(Entity entity);
-        void OnEntityEvent(EntityEvent entitySyncEvent);
+        void OnEntityEvent(EntityEvent entitySyncEvent ,int param);
     }
     internal class EntityManager : Singleton<EntityManager> 
     {
@@ -36,7 +36,7 @@ namespace Manager
         }
 
 
-        public void OnEntitySync(NEntitySync entitySync)
+        public void OnEntitySync(NEntitySync entitySync )
         {
             Entity entity = null;
             entities.TryGetValue(entitySync.Id, out entity);
@@ -50,7 +50,7 @@ namespace Manager
                 if (notifies.ContainsKey(entitySync.Id))
                 {
                     notifies[entitySync.Id].OnEntityChanged(entity);
-                    notifies[entitySync.Id].OnEntityEvent(entitySync.Event);
+                    notifies[entitySync.Id].OnEntityEvent(entitySync.Event , entitySync.Param);
                     
                 }
             }

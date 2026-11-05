@@ -1,0 +1,36 @@
+﻿using System.Collections;
+using System.Collections.Generic;
+using Assets;
+using Models;
+using UnityEngine;
+using UnityEngine.UI;
+
+public class UIRideItem : ListView.ListViewItem {
+
+	public Text title;
+	public Text level;
+	public Image icon;
+	public Image background;
+	public Sprite normalBg;
+	public Sprite selectedBg;
+	
+	public override void OnSelected(bool selected)
+	{
+		this.background.overrideSprite = selected ? selectedBg : normalBg;
+	}
+
+	public Item item;
+
+	public void SetRideItem(Item item, UIRide owner, bool equiped)
+	{
+		this.item = item;
+		if(this.title != null)
+            this.title.text = item.Define.Name;
+        if(this.level != null)
+            this.level.text = item.Define.Level.ToString();
+        if (this.icon != null)
+	        this.icon.overrideSprite = Resloader.Load<Sprite>(this.item.Define.Icon);
+
+	}
+
+}

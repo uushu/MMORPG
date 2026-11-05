@@ -2411,7 +2411,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1442858012577984}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 32.572258, y: 7.9994507, z: 35.85568}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4838794226340264}
@@ -2479,7 +2479,7 @@ MonoBehaviour:
   rotateSpeed: 2
   turnAngle: 10
   speed: 0
-  entityController: {fileID: 0}
+  entityController: {fileID: 114486587701119954}
   onAir: 0
 --- !u!114 &114486587701119954
 MonoBehaviour:
@@ -2501,6 +2501,8 @@ MonoBehaviour:
   animSpeed: 1.5
   jumpPower: 3
   isPlayer: 0
+  rideController: {fileID: 0}
+  rideBone: {fileID: 4095463409478612}
 --- !u!136 &136158063157274762
 CapsuleCollider:
   m_ObjectHideFlags: 1

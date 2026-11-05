@@ -34,7 +34,7 @@ namespace GameServer.Entities
         public Guild Guild;
         public double GuildUpdateTS;
 
-        //public Chat Chat;
+        public Chat Chat;
 
         public Character(CharacterType type,TCharacter cha):
             base(new Core.Vector3Int(cha.MapPosX, cha.MapPosY, cha.MapPosZ),new Core.Vector3Int(100,0,0))
@@ -51,6 +51,7 @@ namespace GameServer.Entities
             this.Info.Class = (CharacterClass)cha.Class;
             this.Info.mapId = cha.MapID;
             this.Info.Gold = cha.Money;
+            this.Info.Ride = 0;
             this.Info.Entity = this.EntityData;
             this.Define = DataManager.Instance.Characters[this.Info.ConfigId];
 
@@ -70,6 +71,8 @@ namespace GameServer.Entities
             this.FriendManager = new FriendManager(this);
             this.FriendManager.GetFriendInfos(this.Info.Friends);
             this.Guild = GuildManager.Instance.GetGuild(this.Data.GuildID);
+
+            this.Chat = new Chat(this);
         }
 
         public long Gold
@@ -84,6 +87,20 @@ namespace GameServer.Entities
                     return;
                 this.StatusManager.AddGoldChange((int)(value - this.Data.Money));
                 this.Data.Money = value;
+            }
+        }
+
+        public int Ride
+        {
+            get
+            {
+                return this.Info.Ride;
+            }
+            set
+            {
+                if (this.Data.Money == value)
+                    return;
+                this.Info.Ride = value;
             }
         }
 
@@ -136,6 +153,8 @@ namespace GameServer.Entities
             {
                 this.StatusManager.PostProgress(message);
             }
+
+            this.Chat.PostProcess(message);
         }
 
         /// <summary>

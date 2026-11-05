@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
+﻿
 using Manager;
 using Models;
 using Service;
@@ -38,10 +36,9 @@ public class UIMain : MonoSingleton<UIMain>
 
 	}
 
-	public void OnClickBackToCharSelect()
+	public void OnClickUISetting()
 	{
-		SceneManager.Instance.LoadScene("CharacterSelect");
-		UserService.Instance.SendGameLeave();
+		UIManager.Instance.Show<UISetting>();
 	}
 	
 	public void OnClickUIBag()
@@ -71,13 +68,9 @@ public class UIMain : MonoSingleton<UIMain>
 	
 	public void OnClickUIRide()
 	{
-		
+		UIManager.Instance.Show<UIRide>();
 	}
 	
-	public void OnClickUISetting()
-	{
-		
-	}
 	
 	
 	public void OnClickUISkill()

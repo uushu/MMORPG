@@ -16,7 +16,6 @@ namespace Models
             get { return userInfo; }
         }
 
-
         public void SetupUserInfo(NUserInfo info)
         {
             this.userInfo = info;
@@ -27,11 +26,27 @@ namespace Models
 
         public NCharacterInfo CurrentCharacter { get; set; }
 
-        public GameObject CurrentCharacterObject { get; set; }
+        public PlayerInputController CurrentCharacterObject { get; set; }
 
         public void AddGold(int goldChange)
         {
             this.CurrentCharacter.Gold += goldChange;
+        }
+
+        public int CurrentRide = 0;
+
+        public void Ride(int id)
+        {
+            if (CurrentRide != id)
+            {
+                CurrentRide = id;
+                CurrentCharacterObject.SendEntityEvent(EntityEvent.Ride, CurrentRide);
+            }
+            else
+            {
+                CurrentRide = 0;
+                CurrentCharacterObject.SendEntityEvent(EntityEvent.Ride, 0);
+            }
         }
     }
     

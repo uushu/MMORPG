@@ -232,6 +232,7 @@ namespace Service
         public void SendGameEnter(int characterIdx)
         {
             Debug.LogFormat("UserGameEnterRequest::characterId :{0}", characterIdx);
+            ChatManager.Instance.Init(); //进入游戏前，初始化聊天系统
             NetMessage message = new NetMessage();
             message.Request = new NetMessageRequest();
             message.Request.gameEnter = new UserGameEnterRequest();
@@ -262,8 +263,9 @@ namespace Service
                 }
             }
         }
-        public void SendGameLeave()
+        public void SendGameLeave( bool isQuit = false)
         {
+            this.isQuietGame = isQuit;
             Debug.Log("UserGameLeaveRequest");
             NetMessage message = new NetMessage();
             message.Request = new NetMessageRequest();
@@ -278,6 +280,14 @@ namespace Service
             User.Instance.CurrentCharacter = null;
             TeamManager.Instance.UpdateTeamInfo(null);
 
+            if (this.isQuietGame)
+            {
+#if UNITY_EDITOR
+                UnityEditor.EditorApplication.isPlaying = false;
+#else
+                Application.Quit();
+#endif
+            }
         }
         
         

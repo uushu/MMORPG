@@ -76,7 +76,7 @@ namespace Service
         }
         
         // 发送同步请求
-        public void SendMapEntitySync(EntityEvent entityEvent, NEntity entity)
+        public void SendMapEntitySync(EntityEvent entityEvent, NEntity entity ,int param)
         {
             Debug.LogFormat("SendMapEntitySync: ID: {0} POS: {1} DIR: {2} SPD: {3}", entity.Id,entity.Position,entity.Direction,entity.Speed);
             NetMessage message =new NetMessage();
@@ -88,6 +88,7 @@ namespace Service
                 Id = entity.Id,
                 Event = entityEvent,
                 Entity = entity,
+                Param = param,
             };
             NetClient.Instance.SendMessage(message);
         }
