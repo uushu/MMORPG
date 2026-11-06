@@ -35,6 +35,7 @@ public class NPCController : MonoBehaviour
 
 		RefreshQuestStatus();
 		QuestManager.Instance.onQuestStatusChanged += OnQuestStatusChanged;
+		NPCManager.Instance.SetNpcPosition(npcId, transform.position);
 	}
 
 	void OnQuestStatusChanged(Quest quest)
@@ -76,6 +77,10 @@ public class NPCController : MonoBehaviour
 	{
 		if (EventSystem.current.IsPointerOverGameObject())
 			return;
+		if (Vector3.Distance(this.transform.position, User.Instance.CurrentCharacterObject.transform.position) > 2f)
+		{
+			User.Instance.CurrentCharacterObject.StartNav(this.transform.position);
+		}
 		Interactive();
 	}
 

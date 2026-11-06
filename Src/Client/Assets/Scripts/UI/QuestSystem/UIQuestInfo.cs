@@ -14,9 +14,16 @@ public class UIQuestInfo : MonoBehaviour {
 	public Text[] targets;
 	public Text rewardMoney;
 	public Text rewardExp;
-
+	public Button navBtn;
 	public Image[] rewardItems;
+
 	
+	private int npc = 0;
+
+	void Start()
+	{
+		//navBtn = GetComponentInChildren()
+	}
 
 	public void SetQuestInfo(Quest quest)
 	{
@@ -78,9 +85,32 @@ public class UIQuestInfo : MonoBehaviour {
 				rewardItems[i].gameObject.SetActive(false);
 			}
 		}
+		
+		
+		if (quest.Info == null)
+		{
+			this.npc = quest.Define.AcceptNPC;
+		}
+		else if (quest.Info.Status == QuestStatus.Completed)
+		{
+			this.npc = quest.Define.SubmitNPC;
+		}
+		
+		if(navBtn != null)
+			this.navBtn.gameObject.SetActive(this.npc >0);
+
 		foreach (var fitter in this.GetComponentsInChildren<ContentSizeFitter>())
 		{
 			fitter.SetLayoutVertical();
 		}
+
+		
 	}
+	public void OnClickNav()
+	{
+		Vector3 pos = NPCManager.Instance.GetNpcPosition(this.npc);
+		User.Instance.CurrentCharacterObject.StartNav(pos);
+		UIManager.Instance.Close<UIQuestSystem>();
+	}
+
 }

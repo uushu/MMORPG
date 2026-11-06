@@ -3,12 +3,13 @@ using System.Collections.Generic;
 using Common.Data;
 using Manager;
 using UI;
+using UnityEngine;
 
 public class NPCManager : Singleton<NPCManager> {
 
 	public delegate bool NPCActionHandler(NPCDefine npc);
 	Dictionary<NPCFunction,NPCActionHandler> npcEvents = new Dictionary<NPCFunction, NPCActionHandler>();
-
+	private Dictionary<int, Vector3> npcPositions = new Dictionary<int, Vector3>();
 	public void RegisterNPCEvent(NPCFunction function, NPCActionHandler action)
 	{
 		if (!npcEvents.ContainsKey(function))
@@ -86,4 +87,16 @@ public class NPCManager : Singleton<NPCManager> {
 
 		return npcEvents[npc.Function](npc);
 	}
+
+	public Vector3 GetNpcPosition(int npc)
+	{
+		return this.npcPositions[npc];
+	}
+
+	public void SetNpcPosition(int npc, Vector3 pos)
+	{
+		this.npcPositions[npc] = pos;
+	}
+	
+	
 }
