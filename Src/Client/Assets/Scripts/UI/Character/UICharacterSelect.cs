@@ -20,8 +20,7 @@ public class UICharacterSelect : MonoBehaviour
 	public Transform uiCharList;
 	public GameObject uiCharInfo;
 
-	public List<GameObject> uiChars = new List<GameObject>();
-
+	public ListView listView;
 	public Text describ;
 
 	private int selectCharacterIdx = -1;
@@ -31,8 +30,22 @@ public class UICharacterSelect : MonoBehaviour
 
 	void Start()
 	{
+		this.listView.onItemSelected += OnCharacterSelected;
+		
 		InitCharacterSelect(true);
 		UserService.Instance.OnCharacterCreate = OnCharacterCreate;
+	}
+
+	void OnDestroy()
+	{
+		this.listView.onItemSelected -= OnCharacterSelected;
+
+	}
+
+	private void OnCharacterSelected(ListView.ListViewItem item)
+	{
+		UICharInfo character = (UICharInfo)item;
+		OnSelectCharacter(character.characterIdx);
 	}
 
 	public void InitCharacterCreate()
@@ -66,39 +79,32 @@ public class UICharacterSelect : MonoBehaviour
         createPanel.SetActive(false);
         selectPanel.SetActive(true);
 
-        if (init)
+        if (!init)
+	        return;
+        this.listView.RemoveAll();
+        this.selectCharacterIdx = -1;
+
+        UICharInfo firstItem = null;
+        
+        for (int i = 0; i < User.Instance.Info.Player.Characters.Count; i++)
         {
-            foreach (var old in uiChars)
-            {
-                Destroy(old);
-            }
-            uiChars.Clear();
 
-            for (int i = 0; i < User.Instance.Info.Player.Characters.Count; i++)
-            {
-
-                GameObject go = Instantiate(uiCharInfo, this.uiCharList);
-                UICharInfo chrInfo = go.GetComponent<UICharInfo>();
-                chrInfo.info = User.Instance.Info.Player.Characters[i];
-
-                Button button = go.GetComponent<Button>();
-                int idx = i;
-                button.onClick.AddListener(() => {
-                    OnSelectCharacter(idx);
-                });
-
-                uiChars.Add(go);
-                go.SetActive(true);
-            }
-
-            if (User.Instance.Info.Player.Characters.Count > 0)
-            {
-	            OnSelectCharacter(0);
-            }
+	        GameObject go = Instantiate(uiCharInfo, this.uiCharList);
+	        UICharInfo item = go.GetComponent<UICharInfo>();
+	        item.info = User.Instance.Info.Player.Characters[i];
+	        item.characterIdx = i;
+	        item.OnSelected(false);
+	        this.listView.AddItem(item);
+	        go.SetActive(true);
+	        
+	        if( i==0 )
+		        firstItem = item;
         }
 
-       
+
+		this.listView.SelectedItem = firstItem;
     }
+    
     /// <summary>
     /// 选择职业
     /// </summary>
@@ -141,12 +147,7 @@ public class UICharacterSelect : MonoBehaviour
         var cha = User.Instance.Info.Player.Characters[idx];
         Debug.LogFormat("Select Char:[{0}]{1}[{2}]", cha.Id, cha.Name, cha.Class);
         characterView.CurrentCharacter = ((int)cha.Class - 1);
-
-        for (int i = 0; i < User.Instance.Info.Player.Characters.Count; i++)
-        {
-            UICharInfo ci = this.uiChars[i].GetComponent<UICharInfo>();
-            ci.Selected = idx == i;
-        }
+        
         SoundManager.Instance.PlaySound(SoundDefine.SFX_UI_Click);
     }
     public void OnClickPlay()

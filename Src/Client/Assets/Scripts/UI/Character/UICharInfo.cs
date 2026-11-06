@@ -1,26 +1,21 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using SkillBridge.Message;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class UICharInfo : MonoBehaviour
+public class UICharInfo : ListView.ListViewItem
 {
-	public SkillBridge.Message.NCharacterInfo info;
+	public NCharacterInfo info;
 	
 	public Text charName;
 	public Text charClass;
 	public Image hightLight;
+	public int characterIdx;
 
-	public bool Selected
+	public override void OnSelected(bool selected)
 	{
-		get
-		{
-			return hightLight.IsActive();
-		}
-		set
-		{
-			hightLight.gameObject.SetActive(value);
-		}
+		this.hightLight.gameObject.SetActive(selected);
 	}
 
 

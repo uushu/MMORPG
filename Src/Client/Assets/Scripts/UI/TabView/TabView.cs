@@ -27,13 +27,17 @@ public class TabView : MonoBehaviour {
     {
         if (this.index != index)
         {
+            this.index = index;
             for (int i = 0; i < tabButtons.Length; i++)
             {
-                tabButtons[i].Select(i == index);
-                if (i < tabPages.Length - 1)
-                    tabPages[i].SetActive(i == index);
+                this.tabButtons[i].Select(i == index);
             }
-            if (OnTabSelect != null)
+
+            for (int i = 0; i < tabPages.Length; i++)
+            {
+                this.tabPages[i].SetActive(i == index);
+            }
+            if(OnTabSelect != null)
                 OnTabSelect(index);
         }
     }

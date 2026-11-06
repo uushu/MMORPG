@@ -6,7 +6,7 @@ using UnityEngine.UI;
 using Image = UnityEngine.UI.Image;
 
 
-public class UIShopItem : MonoBehaviour,ISelectHandler, IPointerClickHandler
+public class UIShopItem : ListView.ListViewItem,ISelectHandler
 {
 
 	public Image icon;
@@ -17,32 +17,20 @@ public class UIShopItem : MonoBehaviour,ISelectHandler, IPointerClickHandler
 	public Image backGround;
 	public Sprite normalBg;
 	public Sprite selectedBg;
-
-	private bool selected;
-	private UIShop shop;
+	
 	private ItemDefine item;
 	private ShopItemDefine ShopItem { get; set; }
-
-	public bool Selected
-	{
-		get
-		{
-			return selected;
-		}
-		set
-		{
-			selected = value;
-			this.backGround.overrideSprite = selected ? selectedBg : normalBg;
-		}
-	}
-	
 	public int ShopItemID { get; set; }
 
-	
-	
-	public void SetShopItem(int shopItemID, ShopItemDefine shopItemDefine, UIShop owner)
+
+	public override void OnSelected(bool selected)
 	{
-		this.shop = owner;
+		this.backGround.overrideSprite = selected ? selectedBg : normalBg;
+	}
+
+	public void SetShopItem(int shopItemID, ShopItemDefine shopItemDefine)
+	{
+	
 		this.ShopItemID = shopItemID;
 		this.ShopItem = shopItemDefine;
 		this.item = DataManager.Instance.Items[this.ShopItem.ItemID];
@@ -55,17 +43,11 @@ public class UIShopItem : MonoBehaviour,ISelectHandler, IPointerClickHandler
 
 	}
 	
-	public void OnPointerClick(PointerEventData eventData)
-	{
-        if(eventData.button == PointerEventData.InputButton.Left)
-	        shop.OnClickShopItem(this);
-	        
-	}
 
 
 	public void OnSelect(BaseEventData eventData)
 	{
-		this.Selected = true;
-		this.shop.SelectShopItem(this);
+		if(this.owner != null)
+			this.owner.SelectedItem = this;
 	}
 }

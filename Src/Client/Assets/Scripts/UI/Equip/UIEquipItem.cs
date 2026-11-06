@@ -10,7 +10,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class UIEquipItem : MonoBehaviour , IPointerClickHandler{
+public class UIEquipItem :ListView.ListViewItem{
 
 	public Image icon;
 	public Text title;
@@ -20,29 +20,20 @@ public class UIEquipItem : MonoBehaviour , IPointerClickHandler{
 	public Image backGround;
 	public Sprite normalBg;
 	public Sprite selectedBg;
-
-	private bool selected;
-	public bool Selected
-	{
-		get
-		{
-			return selected;
-		}
-		set
-		{
-			selected = value;
-			this.backGround.overrideSprite = selected ? selectedBg : normalBg;
-		}
-	}
 	
 	public int EquipIndex { get; set; }
-	private UIEquip owner;
+	private UIEquip equip;
 	private Item item;
 	private bool isEquiped = false;
-	
+
+	public override void OnSelected(bool selected)
+	{
+		this.backGround.overrideSprite = selected ? this.selectedBg : this.normalBg;
+	}
+
 	public void SetEquiItem(int idx, Item item, UIEquip uiEquip, bool isEquiped)
 	{
-		this.owner = uiEquip;
+		this.equip = uiEquip;
 		this.EquipIndex = idx;
 		this.item = item;
 		this.isEquiped = isEquiped;
@@ -58,14 +49,14 @@ public class UIEquipItem : MonoBehaviour , IPointerClickHandler{
 	
 
 	
-	public void OnPointerClick(PointerEventData eventData)
+	public override void OnPointerClick(PointerEventData eventData)
 	{
 		if (eventData.button == PointerEventData.InputButton.Left)
 		{
 			if (this.isEquiped)
 				UnEquip();
 			else
-				owner.OnClickEquipItem(this); 
+				base.OnPointerClick(eventData);
 		}
 		
 	}
@@ -86,11 +77,11 @@ public class UIEquipItem : MonoBehaviour , IPointerClickHandler{
 				var me = MessageBox.Show(string.Format("要穿上装备{0}吗？", this.item.Define.Name), "确认", MessageBoxType.Confirm);
 				me.OnYes = () =>
 				{
-					this.owner.DoEquip(this.item);
+					this.equip.DoEquip(this.item);
 				};
 			}
 			else 
-				this.owner.DoEquip(this.item);
+				this.equip.DoEquip(this.item);
 		};
 	}
 
@@ -100,7 +91,7 @@ public class UIEquipItem : MonoBehaviour , IPointerClickHandler{
 		message.OnYes = () =>
 		{
 
-			owner.UnEquip(this.item);
+			this.equip.UnEquip(this.item);
 		};
 	}
 }

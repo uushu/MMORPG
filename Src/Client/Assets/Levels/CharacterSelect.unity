@@ -2421,9 +2421,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bd4afb950e47d6a449865d5f5e9ef182, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  owner: {fileID: 0}
   charName: {fileID: 574300455}
   charClass: {fileID: 1782698208}
   hightLight: {fileID: 1006100433}
+  characterIdx: 0
 --- !u!114 &593051250
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4595,6 +4597,7 @@ GameObject:
   - component: {fileID: 1144346154}
   - component: {fileID: 1144346155}
   - component: {fileID: 1144346156}
+  - component: {fileID: 1144346157}
   m_Layer: 0
   m_Name: Content
   m_TagString: Untagged
@@ -4656,6 +4659,17 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_HorizontalFit: 0
   m_VerticalFit: 1
+--- !u!114 &1144346157
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1144346153}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2f9ca0da83600bd408fb12cb790ea61c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1151451488
 GameObject:
   m_ObjectHideFlags: 0
@@ -5201,7 +5215,7 @@ MonoBehaviour:
   charName: {fileID: 2116380516}
   uiCharList: {fileID: 1144346154}
   uiCharInfo: {fileID: 593051247}
-  uiChars: []
+  listView: {fileID: 1144346157}
   describ: {fileID: 1078071885}
   characterView: {fileID: 745007278}
 --- !u!1 &1218528553

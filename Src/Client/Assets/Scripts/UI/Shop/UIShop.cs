@@ -8,11 +8,10 @@ using UI;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class UIShop : UIWindow 
+public class UIShop : UIWindow
 {
 
-    public GameObject tabPage1;
-    public GameObject tabPage2;
+    public TabView tabs;
 	
     
     public Text pageText;
@@ -21,6 +20,7 @@ public class UIShop : UIWindow
 
     public Transform[] itemRoot;
     public GameObject shopItem;
+    public ListView listView;
     
     private ShopDefine shop;
     private UIShopItem selectedItem;
@@ -29,6 +29,7 @@ public class UIShop : UIWindow
     private float clickLastTime;
     private float clickWindow = .2f;
     private UIShopItem lastSelectedItem;
+    
 
     private void OnEnable()
     {
@@ -42,8 +43,37 @@ public class UIShop : UIWindow
 
     void Start()
     {
+        this.tabs.OnTabSelect += OnPageChanged;
+        
+        this.listView.onItemSelected += OnShopItemSelected;
+        this.listView.ItemClicked += OnShopItemClicked;
+        
         StartCoroutine(InitItems());
 
+    }
+
+    private void OnDestroy()
+    {
+        this.tabs.OnTabSelect -= OnPageChanged;
+        this.listView.onItemSelected -= OnShopItemSelected;
+        this.listView.ItemClicked -= OnShopItemClicked;
+
+    }
+
+    // 选中商品
+    private void OnShopItemSelected(ListView.ListViewItem item)
+    {
+        this.selectedItem = (UIShopItem) item;
+    }
+    //双击判断
+    private void OnShopItemClicked(ListView.ListViewItem item)
+    {
+        OnClickShopItem((UIShopItem) item);
+    }
+
+    private void OnPageChanged(int index)
+    {
+        this.pageText.text = (index + 1) + "/" + this.tabs.tabPages.Length;
     }
 
     private IEnumerator InitItems()
@@ -57,7 +87,8 @@ public class UIShop : UIWindow
                 int pageIndex = count / 20;
                 GameObject go = Instantiate(shopItem,itemRoot[pageIndex]);
                 UIShopItem ui = go.GetComponent<UIShopItem>();
-                ui.SetShopItem(kv.Key, kv.Value, this);
+                ui.SetShopItem(kv.Key, kv.Value);
+                this.listView.AddItem(ui);
                 count++;
                 // if (count > 40)
                 // {
@@ -82,17 +113,6 @@ public class UIShop : UIWindow
     {
         this.money.text = gold.ToString();
     }
-    public void SelectShopItem(UIShopItem item)
-    {
-        if (selectedItem != null)
-        {
-            selectedItem.Selected = false;
-        }
-
-        selectedItem = item;
-        selectedItem.Selected = true;
-    }
-
     public void OnClickBuy()
     {
         if (this.selectedItem == null)
@@ -108,7 +128,6 @@ public class UIShop : UIWindow
     }
     public void OnClickShopItem(UIShopItem item)
     {
-        SelectShopItem(item);
         if (clickCount > 1)
             clickCount = 1;
         if (clickCount == 1 && lastSelectedItem == item && Time.unscaledTime - clickLastTime < clickWindow)
@@ -130,32 +149,13 @@ public class UIShop : UIWindow
 
     public void OnClickTabBtnL()
     {
-        if (tabPage2.activeSelf)
-        {
-            SelectTab(0);
-        }
+        if(this.tabs.index >0)
+            this.tabs.SelectTab(this.tabs.index - 1);
     }
     public void OnClickTabBtnR()
     {
-        if (tabPage1.activeSelf)
-        {
-            SelectTab(1);
-        }
+        if(this.tabs.index < this.tabs.tabPages.Length - 1)
+            this.tabs.SelectTab(this.tabs.index + 1);
     }
-
-    private void SelectTab(int index)
-    {
-        if(tabPage1 == null || tabPage2 == null || pageText == null)
-            return;
-        
-        bool firstSelected = index == 0;
-        tabPage1.SetActive(firstSelected);
-        tabPage2.SetActive(!firstSelected);
-
-        pageText.text = firstSelected ? "1/2" : "2/2";
-
-    }
-
-
    
 }
